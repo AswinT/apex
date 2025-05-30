@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- SweetAlert2 CSS and JS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
+    <style>
+        .admin-layout {
+            /* display: grid; */ /* Commented out */
+            /* grid-template-columns: 250px 1fr; */ /* Commented out */
+            min-height: 100vh;
+            position: relative; /* Added */
+        }
+        .sidebar {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1.5rem;
+            position: fixed;
+            height: 100vh;
+            width: 250px;
+            overflow-y: auto;
+        }
+        .sidebar-header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .admin-logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        .admin-title {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 1.5rem;
+        }
+        .admin-profile {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin-bottom: 2rem;
+        }
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            background-color: #e74c3c;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 0.8rem;
+        }
+        .profile-info {
+            flex-grow: 1;
+        }
+        .profile-name {
+            font-weight: bold;
+            margin-bottom: 0.3rem;
+        }
+        .profile-role {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+        .nav-section {
+            margin-bottom: 1.5rem;
+        }
+        .nav-section-title {
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-bottom: 0.8rem;
+            padding-left: 0.5rem;
+        }
+        .nav-items {
+            list-style: none;
+            padding: 0;
+        }
+        .nav-items li {
+            margin-bottom: 0.3rem;
+        }
+        .nav-items a {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .nav-items a:hover, .nav-items a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .nav-icon {
+            margin-right: 0.8rem;
+            width: 20px;
+            text-align: center;
+        }
+        .main-content {
+            padding: 2rem;
+            margin-left: 250px; /* Stays to make space for fixed sidebar */
+            width: calc(100% - 250px); /* Added for explicit width calculation */
+            box-sizing: border-box;   /* Added to include padding in width calculation */
+        }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        .search-container {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+        }
+        .search-form {
+            display: flex;
+            gap: 1rem;
+        }
+        .search-input {
+            flex-grow: 1;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        .btn { /* General button style */
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .btn-primary {
+            background-color: #2c3e50;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #1a252f;
+        }
+        .btn-secondary {
+            background-color: #e0e0e0;
+            color: #333;
+            text-decoration: none; /* For <a> styled as button */
+            display: inline-block; /* For <a> styled as button */
+            text-align: center; /* For <a> styled as button */
+        }
+        .btn-secondary:hover {
+            background-color: #d0d0d0;
+        }
+        .users-table-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            overflow: hidden; /* Good for rounded corners on table */
+        }
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .users-table th {
+            background-color: rgba(44, 62, 80, 0.05);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .users-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        .users-table tr:last-child td {
+            border-bottom: none;
+        }
+        .users-table tr:hover {
+            background-color: rgba(44, 62, 80, 0.02);
+        }
+        .user-status {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+        .status-active {
+            background-color: rgba(39, 174, 96, 0.1);
+            color: #27ae60;
+        }
+        .status-blocked {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: #e74c3c;
+        }
+        .action-btn { /* Specific for action buttons in table */
+            padding: 0.5rem 0.8rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .btn-block {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .btn-block:hover {
+            background-color: #c0392b;
+        }
+        .btn-unblock {
+            background-color: #27ae60;
+            color: white;
+        }
+        .btn-unblock:hover {
+            background-color: #219653;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 1.5rem;
+            gap: 0.5rem;
+        }
+        .pagination-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 2.5rem; /* Ensure consistent width */
+            height: 2.5rem;
+            border: 1px solid #ddd; /* Added border for clarity */
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: #2c3e50;
+            text-decoration: none;
+            transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+        }
+        .pagination-item:hover {
+            background-color: rgba(44, 62, 80, 0.05);
+            border-color: #bbb; /* Slightly darker border on hover */
+        }
+        .pagination-item.active {
+            background-color: #2c3e50;
+            color: white;
+            border-color: #2c3e50; /* Match background */
+        }
+        .pagination-item.disabled { /* For prev/next disabled appearance */
+             opacity: 0.5;
+             cursor: default;
+             pointer-events: none;
+        }
+        .footer {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+            text-align: center;
+            color: #777;
+            font-size: 0.9rem;
+        }
+        .no-results {
+            text-align: center;
+            padding: 2rem;
+            color: #777;
+        }
+         .alert { /* Flash message styles */
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="admin-logo">APEX</div>
+                <div class="admin-title">Admin Panel</div>
+            </div>
+            
+            <div class="admin-profile">
+                <div class="profile-avatar">
+                    <%= user.username.charAt(0).toUpperCase() %>
+                </div>
+                <div class="profile-info">
+                    <div class="profile-name"><%= user.username %></div>
+                    <div class="profile-role">Administrator</div>
+                </div>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Main</div>
+                <ul class="nav-items">
+                    <li>
+                        <a href="/admin/dashboard">
+                            <span class="nav-icon">📊</span>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/orders">
+                            <span class="nav-icon">📦</span>
+                            Orders
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/products">
+                            <span class="nav-icon">🎧</span>
+                            Products
+                        </a>
+                    </li>
+                     <li>
+                        <a href="/admin/categories"> <span class="nav-icon">🏷️</span>
+                            Categories
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/users" class="active">
+                            <span class="nav-icon">👥</span>
+                            Users
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Settings</div>
+                <ul class="nav-items">
+                    <li>
+                        <a href="/admin/profile">
+                            <span class="nav-icon">👤</span>
+                            Profile
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/settings">
+                            <span class="nav-icon">⚙️</span>
+                            Settings
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/logout">
+                            <span class="nav-icon">🚪</span>
+                            Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">User Management</h1>
+                <div class="header-actions">
+                    <% if (typeof totalUsers !== 'undefined') { %>
+                        <span>Total Users: <%= totalUsers %></span>
+                    <% } %>
+                </div>
+            </div>
+
+            <% if (locals.messages && messages.success && messages.success.length > 0) { %>
+                <div class="alert alert-success">
+                    <%= messages.success[0] %>
+                </div>
+            <% } %>
+            <% if (locals.messages && messages.error && messages.error.length > 0) { %>
+                <div class="alert alert-error">
+                    <%= messages.error[0] %>
+                </div>
+            <% } %>
+            
+            <div class="search-container">
+                <form class="search-form" action="/admin/users" method="GET">
+                    <input type="text" name="search" class="search-input" placeholder="Search by username or email" value="<%= typeof search !== 'undefined' ? search : '' %>">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                    <% if (typeof search !== 'undefined' && search) { %>
+                        <a href="/admin/users" class="btn btn-secondary">Clear</a>
+                    <% } %>
+                </form>
+            </div>
+            
+            <div class="users-table-container">
+                <% if (typeof users !== 'undefined' && users && users.length > 0) { %>
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Joined On</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% users.forEach(u => { %> <tr>
+                                    <td><%= u.username %></td>
+                                    <td><%= u.email %></td>
+                                    <td><%= u.phone || 'N/A' %></td>
+                                    <td><%= new Date(u.createdAt).toLocaleDateString('en-US', { 
+                                        year: 'numeric', 
+                                        month: 'short', 
+                                        day: 'numeric' 
+                                    }) %></td>
+                                    <td>
+                                        <% if (u.isBlocked) { %>
+                                            <span class="user-status status-blocked">Blocked</span>
+                                        <% } else { %>
+                                            <span class="user-status status-active">Active</span>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <% if (u.isBlocked) { %>
+                                            <button class="action-btn btn-unblock" data-user-id="<%= u._id %>">Unblock</button>
+                                        <% } else { %>
+                                            <button class="action-btn btn-block" data-user-id="<%= u._id %>">Block</button>
+                                        <% } %>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                <% } else { %>
+                    <div class="no-results">
+                        <p>No users found <%= (typeof search !== 'undefined' && search) ? `matching "${search}"` : '' %></p>
+                    </div>
+                <% } %>
+            </div>
+            
+            <% if (typeof totalPages !== 'undefined' && totalPages > 1) { %>
+                <div class="pagination">
+                    <% if (typeof currentPage !== 'undefined' && currentPage > 1) { %>
+                        <a href="/admin/users?page=<%= currentPage - 1 %>&limit=<%= typeof limit !== 'undefined' ? limit : 10 %><%= (typeof search !== 'undefined' && search) ? `&search=${search}` : '' %>" class="pagination-item">&laquo;</a>
+                    <% } else { %>
+                        <span class="pagination-item disabled">&laquo;</span>
+                    <% } %>
+                    
+                    <% for (let i = 1; i <= totalPages; i++) { %>
+                        <a href="/admin/users?page=<%= i %>&limit=<%= typeof limit !== 'undefined' ? limit : 10 %><%= (typeof search !== 'undefined' && search) ? `&search=${search}` : '' %>" class="pagination-item <%= i === currentPage ? 'active' : '' %>"><%= i %></a>
+                    <% } %>
+                    
+                    <% if (typeof currentPage !== 'undefined' && currentPage < totalPages) { %>
+                        <a href="/admin/users?page=<%= currentPage + 1 %>&limit=<%= typeof limit !== 'undefined' ? limit : 10 %><%= (typeof search !== 'undefined' && search) ? `&search=${search}` : '' %>" class="pagination-item">&raquo;</a>
+                    <% } else { %>
+                        <span class="pagination-item disabled">&raquo;</span>
+                    <% } %>
+                </div>
+            <% } %>
+            
+            <div class="footer">
+                <p>&copy; <%= new Date().getFullYear() %> Apex Headphones. All Rights Reserved.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load SweetAlert2 at the beginning to ensure it's available
+            if (typeof Swal === 'undefined') {
+                console.error('SweetAlert2 is not loaded. Please check the script inclusion.');
+                return;
+            }
+            
+            // Block/Unblock User functionality
+            const userActionButtons = document.querySelectorAll('.btn-block, .btn-unblock');
+            
+            userActionButtons.forEach(button => {
+                button.addEventListener('click', async function() {
+                    const userId = this.getAttribute('data-user-id');
+                    const isBlocking = this.classList.contains('btn-block');
+                    const action = isBlocking ? 'block' : 'unblock';
+                    const confirmMessage = `Are you sure you want to ${action} this user?`;
+                    
+                    // Using SweetAlert2 for confirmation
+                    Swal.fire({
+                        title: `${action.charAt(0).toUpperCase() + action.slice(1)} User?`,
+                        text: confirmMessage,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: `Yes, ${action} user!`
+                    }).then(async (result) => {
+                        if (result.isConfirmed) {
+                            try {
+                                const response = await fetch(`/admin/users/toggle-block/${userId}`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    }
+                                });
+                                
+                                const data = await response.json();
+                                
+                                if (data.success) {
+                                    Swal.fire({
+                                        title: 'Success!',
+                                        text: data.message,
+                                        icon: 'success',
+                                        timer: 2000,
+                                        showConfirmButton: false
+                                    }).then(() => {
+                                        window.location.reload();
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        title: 'Error!',
+                                        text: data.message || `Failed to ${action} user. Please try again.`,
+                                        icon: 'error'
+                                    });
+                                }
+                            } catch (error) {
+                                console.error('Error toggling user block status:', error);
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: `An error occurred. Please try again.`,
+                                    icon: 'error'
+                                });
+                            }
+                        }
+                    });
+                });
+            });
+
+            // Display flash messages with SweetAlert2 instead of built-in alerts
+            const successAlert = document.querySelector('.alert.alert-success');
+            const errorAlert = document.querySelector('.alert.alert-error');
+            
+            if (successAlert && successAlert.textContent.trim() !== '') {
+                Swal.fire({
+                    title: 'Success!',
+                    text: successAlert.textContent.trim(),
+                    icon: 'success',
+                    timer: 3000,
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false
+                });
+                successAlert.style.display = 'none';
+            }
+            
+            if (errorAlert && errorAlert.textContent.trim() !== '') {
+                Swal.fire({
+                    title: 'Error!',
+                    text: errorAlert.textContent.trim(),
+                    icon: 'error',
+                    timer: 3000,
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false
+                });
+                errorAlert.style.display = 'none';
+            }
+        });
+    </script>
+    <!-- SweetAlert2 is now loaded in the head section -->
+</body>
+</html>

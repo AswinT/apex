@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f9f9f9;
+        }
+        
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        
+        .logo span {
+            color: #e74c3c;
+        }
+        
+        .nav-menu {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-item {
+            margin-left: 30px;
+            font-weight: 500;
+        }
+        
+        .nav-item a:hover {
+            color: #e74c3c;
+        }
+        
+        .nav-item.active a {
+            color: #e74c3c;
+        }
+        
+        .user-actions {
+            display: flex;
+            align-items: center;
+        }
+        
+        .cart-icon, .user-icon {
+            position: relative;
+            margin-left: 20px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #e74c3c;
+            color: white;
+            font-size: 12px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Page Header */
+        .page-header {
+            background-color: #2c3e50;
+            color: #fff;
+            padding: 30px 0;
+            margin-bottom: 40px;
+        }
+        
+        .page-header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .breadcrumbs {
+            display: flex;
+            list-style: none;
+        }
+        
+        .breadcrumbs li {
+            display: flex;
+            align-items: center;
+        }
+        
+        .breadcrumbs li:not(:last-child)::after {
+            content: '›';
+            margin: 0 10px;
+            color: #e74c3c;
+        }
+        
+        /* Shop Layout */
+        .shop-layout {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+        
+        /* Filters Sidebar */
+        .filters-sidebar {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+        }
+        
+        .filter-section {
+            margin-bottom: 25px;
+        }
+        
+        .filter-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        .search-filter input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .category-filter {
+            list-style: none;
+        }
+        
+        .category-filter li {
+            margin-bottom: 10px;
+        }
+        
+        .category-filter label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .category-filter input {
+            margin-right: 10px;
+        }
+        
+        .price-filter-inputs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .price-filter-inputs input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .price-slider {
+            width: 100%;
+            margin: 15px 0;
+        }
+        
+        .filter-button {
+            width: 100%;
+            padding: 10px;
+            background-color: #e74c3c;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .filter-button:hover {
+            background-color: #c0392b;
+        }
+        
+        .clear-filter-button {
+            width: 100%;
+            padding: 10px;
+            background-color: transparent;
+            color: #777;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-weight: 500;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .clear-filter-button:hover {
+            background-color: #f5f5f5;
+        }
+        
+        /* Products Section */
+        .products-section {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .products-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .products-count {
+            font-size: 16px;
+            color: #777;
+        }
+        
+        .sort-options {
+            display: flex;
+            align-items: center;
+        }
+        
+        .sort-label {
+            margin-right: 10px;
+            font-weight: 500;
+        }
+        
+        .sort-select {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: #fff;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .product-card {
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+        
+        .product-image {
+            height: 180px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .product-card:hover .product-image img {
+            transform: scale(1.05);
+        }
+        
+        .product-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #e74c3c;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .product-content {
+            padding: 15px;
+        }
+        
+        .product-category {
+            font-size: 12px;
+            color: #777;
+            margin-bottom: 5px;
+        }
+        
+        .product-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .product-price {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .current-price {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        
+        .original-price {
+            font-size: 14px;
+            text-decoration: line-through;
+            color: #999;
+            margin-left: 8px;
+        }
+        
+        .product-rating {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .stars {
+            color: #f39c12;
+            margin-right: 5px;
+            font-size: 14px;
+        }
+        
+        .review-count {
+            font-size: 12px;
+            color: #777;
+        }
+        
+        .add-to-cart {
+            width: 100%;
+            padding: 8px;
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .add-to-cart:hover {
+            background-color: #1a252f;
+        }
+        
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        .pagination-controls {
+            display: flex;
+            align-items: center;
+        }
+        
+        .pagination-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 35px;
+            height: 35px;
+            padding: 0 10px;
+            margin: 0 5px;
+            background-color: #fff;
+            color: #2c3e50;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .pagination-btn:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .pagination-btn.active {
+            background-color: #2c3e50;
+            color: #fff;
+            border-color: #2c3e50;
+        }
+        
+        .pagination-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .pagination-ellipsis {
+            margin: 0 5px;
+            color: #777;
+        }
+        
+        /* No products message */
+        .no-products {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .no-products h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .no-products p {
+            color: #777;
+            margin-bottom: 20px;
+        }
+        
+        .no-products button {
+            padding: 10px 20px;
+            background-color: #e74c3c;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .shop-layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .filters-sidebar {
+                order: 1;
+                margin-bottom: 30px;
+            }
+            
+            .products-section {
+                order: 2;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+            
+            .products-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .products-count {
+                margin-bottom: 10px;
+            }
+            
+            .nav-menu {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            
+            .price-filter-inputs {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="/" class="logo">APEX<span>.</span></a>
+            
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="/">Home</a></li>
+                    <li class="nav-item active"><a href="/headphones">Headphones</a></li>
+                    <li class="nav-item"><a href="/about">About Us</a></li>
+                    <li class="nav-item"><a href="/contact">Contact</a></li>
+                </ul>
+            </nav>
+            
+            <div class="user-actions">
+                <div class="cart-icon">
+                    🛒
+                    <span class="cart-count">0</span>
+                </div>
+                <% if (user) { %>
+                    <a href="/account" class="user-icon">👤</a>
+                <% } else { %>
+                    <a href="/login" class="user-icon">🔑</a>
+                <% } %>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Shop Headphones</h1>
+            <ul class="breadcrumbs">
+                <li><a href="/">Home</a></li>
+                <li>Headphones</li>
+            </ul>
+        </div>
+    </section>
+    
+    <!-- Shop Content -->
+    <div class="container">
+        <div class="shop-layout">
+            <!-- Filters Sidebar -->
+            <aside class="filters-sidebar">
+                <form action="/headphones" method="GET" id="filterForm">
+                    <!-- Search Filter -->
+                    <div class="filter-section search-filter">
+                        <h3 class="filter-title">Search</h3>
+                        <input type="text" name="search" placeholder="Search products..." value="<%= search %>">
+                    </div>
+                    
+                    <!-- Category Filter -->
+                    <div class="filter-section">
+                        <h3 class="filter-title">Categories</h3>
+                        <ul class="category-filter">
+                            <% categories.forEach(cat => { %>
+                                <li>
+                                    <label>
+                                        <input type="radio" name="category" value="<%= cat._id %>" 
+                                            <%= category == cat._id.toString() ? 'checked' : '' %>>
+                                        <%= cat.name %>
+                                    </label>
+                                </li>
+                            <% }); %>
+                            <li>
+                                <label>
+                                    <input type="radio" name="category" value="" 
+                                        <%= !category ? 'checked' : '' %>>
+                                    All Categories
+                                </label>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Price Range Filter -->
+                    <div class="filter-section">
+                        <h3 class="filter-title">Price Range</h3>
+                        <div class="price-filter-inputs">
+                            <input type="number" name="minPrice" placeholder="Min" min="0" value="<%= minPrice %>">
+                            <input type="number" name="maxPrice" placeholder="Max" min="0" value="<%= maxPrice %>">
+                        </div>
+                        <input type="range" class="price-slider" min="<%= priceRange.min %>" max="<%= priceRange.max %>" step="10" value="<%= maxPrice %>">
+                    </div>
+                    
+                    <!-- Hidden sort field to preserve sort when filtering -->
+                    <input type="hidden" name="sort" value="<%= sort %>">
+                    
+                    <!-- Apply Filters Button -->
+                    <button type="submit" class="filter-button">Apply Filters</button>
+                    
+                    <!-- Clear Filters Button -->
+                    <a href="/headphones" class="clear-filter-button">Clear All Filters</a>
+                </form>
+            </aside>
+            
+            <!-- Products Section -->
+            <div class="products-section">
+                <div class="products-header">
+                    <div class="products-count">
+                        <% if (pagination.totalItems === 0) { %>
+                            No products found
+                        <% } else { %>
+                            Showing <%= (pagination.currentPage - 1) * pagination.limit + 1 %> - 
+                            <%= Math.min(pagination.currentPage * pagination.limit, pagination.totalItems) %> 
+                            of <%= pagination.totalItems %> products
+                        <% } %>
+                    </div>
+                    
+                    <div class="sort-options">
+                        <span class="sort-label">Sort by:</span>
+                        <select class="sort-select" id="sortSelect">
+                            <option value="newest" <%= sort === 'newest' ? 'selected' : '' %>>Newest</option>
+                            <option value="price-asc" <%= sort === 'price-asc' ? 'selected' : '' %>>Price: Low to High</option>
+                            <option value="price-desc" <%= sort === 'price-desc' ? 'selected' : '' %>>Price: High to Low</option>
+                            <option value="name-asc" <%= sort === 'name-asc' ? 'selected' : '' %>>Name: A to Z</option>
+                            <option value="name-desc" <%= sort === 'name-desc' ? 'selected' : '' %>>Name: Z to A</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <% if (products.length > 0) { %>
+                    <div class="products-grid">
+                        <% products.forEach(product => { %>
+                            <div class="product-card">
+                                <a href="/product/<%= product._id %>" class="product-link" style="text-decoration: none; color: inherit;">
+                                    <div class="product-image">
+                                        <img src="<%= product.images[0] %>" alt="<%= product.name %>">
+                                        <% if (product.salePrice && product.salePrice < product.price) { %>
+                                            <div class="product-badge">Sale</div>
+                                        <% } %>
+                                    </div>
+                                    <div class="product-content">
+                                        <div class="product-category"><%= product.category ? product.category.name : 'Headphones' %></div>
+                                        <h3 class="product-title"><%= product.name %></h3>
+                                        <div class="product-price">
+                                            <% if (product.salePrice && product.salePrice < product.price) { %>
+                                                <div class="current-price">₹<%= product.salePrice.toFixed(2) %></div>
+                                                <div class="original-price">₹<%= product.price.toFixed(2) %></div>
+                                            <% } else { %>
+                                                <div class="current-price">₹<%= product.price.toFixed(2) %></div>
+                                            <% } %>
+                                        </div>
+                                        <div class="product-rating">
+                                            <div class="stars">★★★★<span style="color: #ddd;">★</span></div>
+                                            <div class="review-count"><%= product.reviewCount || 0 %> reviews</div>
+                                        </div>
+                                    </div>
+                                </a>
+                                <button class="add-to-cart" data-product-id="<%= product._id %>">Add to Cart</button>
+                            </div>
+                        <% }); %>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <% if (pagination.totalPages > 1) { %>
+                        <div class="pagination">
+                            <div class="pagination-controls">
+                                <% 
+                                function getPaginationUrl(pageNum) {
+                                    let url = `/headphones?page=${pageNum}`;
+                                    if (search) url += `&search=${search}`;
+                                    if (category) url += `&category=${category}`;
+                                    if (minPrice) url += `&minPrice=${minPrice}`;
+                                    if (maxPrice) url += `&maxPrice=${maxPrice}`;
+                                    if (sort) url += `&sort=${sort}`;
+                                    return url;
+                                }
+                                %>
+                                
+                                <% if (pagination.hasPrevPage) { %>
+                                    <a href="<%= getPaginationUrl(pagination.prevPage) %>" class="pagination-btn">&laquo;</a>
+                                <% } else { %>
+                                    <span class="pagination-btn disabled">&laquo;</span>
+                                <% } %>
+                                
+                                <% 
+                                // Show page numbers with ellipsis for large page counts
+                                let startPage = Math.max(1, pagination.currentPage - 2);
+                                let endPage = Math.min(pagination.totalPages, pagination.currentPage + 2);
+                                
+                                // Ensure we always show at least 5 pages if available
+                                if (endPage - startPage < 4) {
+                                    if (startPage === 1) {
+                                        endPage = Math.min(pagination.totalPages, startPage + 4);
+                                    } else {
+                                        startPage = Math.max(1, endPage - 4);
+                                    }
+                                }
+                                
+                                // Show first page and ellipsis if needed
+                                if (startPage > 1) { %>
+                                    <a href="<%= getPaginationUrl(1) %>" class="pagination-btn">1</a>
+                                    <% if (startPage > 2) { %>
+                                        <span class="pagination-ellipsis">...</span>
+                                    <% } %>
+                                <% } %>
+                                
+                                <% for(let i = startPage; i <= endPage; i++) { %>
+                                    <% if (i === pagination.currentPage) { %>
+                                        <span class="pagination-btn active"><%= i %></span>
+                                    <% } else { %>
+                                        <a href="<%= getPaginationUrl(i) %>" class="pagination-btn"><%= i %></a>
+                                    <% } %>
+                                <% } %>
+                                
+                                <!-- Show last page and ellipsis if needed -->
+                                <% if (endPage < pagination.totalPages) { %>
+                                    <% if (endPage < pagination.totalPages - 1) { %>
+                                        <span class="pagination-ellipsis">...</span>
+                                    <% } %>
+                                    <a href="<%= getPaginationUrl(pagination.totalPages) %>" class="pagination-btn"><%= pagination.totalPages %></a>
+                                <% } %>
+                                
+                                <% if (pagination.hasNextPage) { %>
+                                    <a href="<%= getPaginationUrl(pagination.nextPage) %>" class="pagination-btn">&raquo;</a>
+                                <% } else { %>
+                                    <span class="pagination-btn disabled">&raquo;</span>
+                                <% } %>
+                            </div>
+                        </div>
+                    <% } %>
+                <% } else { %>
+                    <!-- No Products Found -->
+                    <div class="no-products">
+                        <h3>No products found</h3>
+                        <p>Try adjusting your search or filter criteria to find what you're looking for.</p>
+                        <a href="/headphones" class="filter-button">Clear All Filters</a>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer is included in a partial -->
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle sorting changes
+            const sortSelect = document.getElementById('sortSelect');
+            sortSelect.addEventListener('change', function() {
+                const currentUrl = new URL(window.location.href);
+                currentUrl.searchParams.set('sort', this.value);
+                window.location.href = currentUrl.toString();
+            });
+            
+            // Price slider interaction
+            const priceSlider = document.querySelector('.price-slider');
+            const maxPriceInput = document.querySelector('input[name="maxPrice"]');
+            
+            if (priceSlider && maxPriceInput) {
+                priceSlider.addEventListener('input', function() {
+                    maxPriceInput.value = this.value;
+                });
+                
+                maxPriceInput.addEventListener('input', function() {
+                    priceSlider.value = this.value;
+                });
+            }
+            
+            // Add to cart functionality
+            const addToCartButtons = document.querySelectorAll('.add-to-cart');
+            const cartCount = document.querySelector('.cart-count');
+            
+            addToCartButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const productId = this.getAttribute('data-product-id');
+                    // In a real application, this would make an AJAX call to add the item to the cart
+                    console.log('Adding product to cart:', productId);
+                    
+                    // Update cart count (for demo purposes)
+                    let currentCount = parseInt(cartCount.textContent);
+                    cartCount.textContent = currentCount + 1;
+                    
+                    // Show confirmation
+                    this.textContent = 'Added to Cart';
+                    setTimeout(() => {
+                        this.textContent = 'Add to Cart';
+                    }, 2000);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- Cropper.js CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet" />
+    <style>
+        .admin-layout {
+            /* display: grid; */ /* Commented out */
+            /* grid-template-columns: 250px 1fr; */ /* Commented out */
+            min-height: 100vh;
+            position: relative; /* Added */
+        }
+        .sidebar {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1.5rem;
+            position: fixed;
+            height: 100vh;
+            width: 250px;
+            overflow-y: auto;
+        }
+        .sidebar-header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .admin-logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        .admin-title {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 1.5rem;
+        }
+        .admin-profile {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin-bottom: 2rem;
+        }
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            background-color: #e74c3c;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 0.8rem;
+        }
+        .profile-info {
+            flex-grow: 1;
+        }
+        .profile-name {
+            font-weight: bold;
+            margin-bottom: 0.3rem;
+        }
+        .profile-role {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+        .nav-section {
+            margin-bottom: 1.5rem;
+        }
+        .nav-section-title {
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-bottom: 0.8rem;
+            padding-left: 0.5rem;
+        }
+        .nav-items {
+            list-style: none;
+            padding: 0;
+        }
+        .nav-items li {
+            margin-bottom: 0.3rem;
+        }
+        .nav-items a {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .nav-items a:hover, .nav-items a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .nav-icon {
+            margin-right: 0.8rem;
+            width: 20px;
+            text-align: center;
+        }
+        .main-content {
+            padding: 2rem;
+            margin-left: 250px; /* Stays to make space for fixed sidebar */
+            width: calc(100% - 250px); /* Added for explicit width calculation */
+            box-sizing: border-box;   /* Added to include padding in width calculation */
+        }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        .form-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+        }
+        .form-section {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        .form-section:last-child {
+            border-bottom: none;
+        }
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        .form-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .btn-primary {
+            background-color: #2c3e50;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #1a252f;
+        }
+        .btn-secondary {
+            background-color: #e0e0e0;
+            color: #333;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        .btn-secondary:hover {
+            background-color: #d0d0d0;
+        }
+        .required-label::after {
+            content: "*";
+            color: #e74c3c;
+            margin-left: 0.25rem;
+        }
+        .help-text {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+        .image-upload-container {
+            border: 2px dashed #ddd;
+            border-radius: 4px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            transition: all 0.3s;
+        }
+        .image-upload-container:hover, .image-upload-container.active {
+            border-color: #3498db;
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+        .upload-icon {
+            font-size: 2rem;
+            color: #aaa;
+            margin-bottom: 1rem;
+        }
+        .upload-text {
+            margin-bottom: 1rem;
+        }
+        .image-preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .image-preview {
+            width: 150px;
+            height: 150px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            overflow: hidden;
+            position: relative;
+        }
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .remove-image {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 25px;
+            height: 25px;
+            background-color: rgba(231, 76, 60, 0.8);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            transition: background-color 0.2s;
+        }
+        .remove-image:hover {
+            background-color: #e74c3c;
+        }
+        .dynamic-field-container {
+            margin-bottom: 1rem;
+        }
+        .dynamic-field-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            align-items: flex-start;
+        }
+        .dynamic-field-key, .dynamic-field-value {
+            flex: 1;
+        }
+        .add-field-btn, .remove-field-btn {
+            padding: 0.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+        }
+        .add-field-btn {
+            background-color: #27ae60;
+            color: white;
+            margin-top: 0.5rem;
+        }
+        .add-field-btn:hover {
+            background-color: #219653;
+        }
+        .remove-field-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .remove-field-btn:hover {
+            background-color: #c0392b;
+        }
+        .tags-input-container {
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 0.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            min-height: 44px;
+        }
+        .tags-input-container:focus-within {
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        .tag {
+            background-color: #edf2f7;
+            border-radius: 4px;
+            padding: 0.3rem 0.6rem;
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+        .tag-close {
+            margin-left: 0.5rem;
+            cursor: pointer;
+            font-weight: bold;
+            color: #666;
+        }
+        .tags-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 0.3rem 0;
+            font-size: 1rem;
+            min-width: 100px;
+        }
+        .footer {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+            text-align: center;
+            color: #777;
+            font-size: 0.9rem;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-left: 0.5rem;
+        }
+        .status-listed {
+            background-color: rgba(39, 174, 96, 0.1);
+            color: #27ae60;
+        }
+        .status-unlisted {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: #e74c3c;
+        }
+        .meta-info {
+            font-size: 0.9rem;
+            color: #777;
+            margin-top: 0.25rem;
+        }
+         .alert { /* Added for consistency */
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Simple Cropper Modal Styles */
+        .simple-cropper-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .simple-cropper-modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            max-width: 90vw;
+            max-height: 90vh;
+            width: 800px;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            background: #f8f9fa;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: #333;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            color: #000;
+        }
+
+        .modal-body {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fa;
+        }
+
+        .cropper-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cropper-container img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            background: #f8f9fa;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="admin-logo">APEX</div>
+                <div class="admin-title">Admin Panel</div>
+            </div>
+
+            <div class="admin-profile">
+                <div class="profile-avatar">
+                    <%= user.username.charAt(0).toUpperCase() %>
+                </div>
+                <div class="profile-info">
+                    <div class="profile-name"><%= user.username %></div>
+                    <div class="profile-role">Administrator</div>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Main</div>
+                <ul class="nav-items">
+                    <li>
+                        <a href="/admin/dashboard">
+                            <span class="nav-icon">📊</span>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/orders">
+                            <span class="nav-icon">📦</span>
+                            Orders
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/products" class="active"> <span class="nav-icon">🎧</span>
+                            Products
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/categories">
+                            <span class="nav-icon">🏷️</span>
+                            Categories
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/users">
+                            <span class="nav-icon">👥</span>
+                            Users
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Settings</div>
+                <ul class="nav-items">
+                    <li>
+                        <a href="/admin/profile">
+                            <span class="nav-icon">👤</span>
+                            Profile
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/settings">
+                            <span class="nav-icon">⚙️</span>
+                            Settings
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/logout">
+                            <span class="nav-icon">🚪</span>
+                            Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <% if (typeof product !== 'undefined' && product) { %>
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">
+                            Edit Product
+                            <% if (product.isListed) { %>
+                                <span class="status-badge status-listed">Listed</span>
+                            <% } else { %>
+                                <span class="status-badge status-unlisted">Unlisted</span>
+                            <% } %>
+                        </h1>
+                        <div class="meta-info">
+                            Product ID: <%= product._id %>
+                        </div>
+                    </div>
+                </div>
+
+                <% if (locals.messages && messages.error && messages.error.length > 0) { %>
+                    <div class="alert alert-error" style="margin-bottom: 1rem;">
+                        <%= messages.error[0] %>
+                    </div>
+                <% } else if (typeof error !== 'undefined' && error) { %>
+                    <div class="error-message" style="margin-bottom: 1rem;">
+                        <%= error %>
+                    </div>
+                <% } %>
+
+                <% if (locals.messages && messages.success && messages.success.length > 0) { %>
+                    <div class="alert alert-success" style="margin-bottom: 1rem;">
+                         <%= messages.success[0] %>
+                    </div>
+                <% } %>
+
+                <div class="form-container">
+                    <form action="/admin/products/edit/<%= product._id %>" method="POST" enctype="multipart/form-data" id="editProductForm">
+
+                        <div class="form-section">
+                            <h2 class="section-title">Basic Information</h2>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="name" class="required-label">Product Name</label>
+                                    <input
+                                        type="text"
+                                        id="name"
+                                        name="name"
+                                        class="form-control"
+                                        required
+                                        value="<%= product.name %>"
+                                    >
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="brand" class="required-label">Brand</label>
+                                    <input
+                                        type="text"
+                                        id="brand"
+                                        name="brand"
+                                        class="form-control"
+                                        required
+                                        value="<%= product.brand %>"
+                                    >
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="category" class="required-label">Category</label>
+                                    <select id="category" name="category" class="form-control" required>
+                                        <option value="">Select a Category</option>
+                                        <% if(typeof categories !== 'undefined' && categories.length > 0) { %>
+                                            <% categories.forEach(category => { %>
+                                                <option value="<%= category._id %>" <%= product.category && product.category._id && product.category._id.toString() === category._id.toString() ? 'selected' : '' %>>
+                                                    <%= category.name %>
+                                                </option>
+                                            <% }); %>
+                                        <% } %>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="stockQuantity" class="required-label">Stock Quantity</label>
+                                    <input
+                                        type="number"
+                                        id="stockQuantity"
+                                        name="stockQuantity"
+                                        class="form-control"
+                                        min="0"
+                                        required
+                                        value="<%= product.stockQuantity %>"
+                                    >
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="price" class="required-label">Price (₹)</label>
+                                    <input
+                                        type="text"
+                                        id="price"
+                                        name="price"
+                                        class="form-control"
+                                        required
+                                        value="<%= product.price %>"
+                                    >
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="salePrice">Sale Price (₹)</label>
+                                    <input
+                                        type="text"
+                                        id="salePrice"
+                                        name="salePrice"
+                                        class="form-control"
+                                        value="<%= product.salePrice ? product.salePrice : '' %>"
+                                    >
+                                    <div class="help-text">Leave empty if not on sale</div>
+                                </div>
+
+                                <div class="form-group full-width">
+                                    <label for="description" class="required-label">Description</label>
+                                    <textarea
+                                        id="description"
+                                        name="description"
+                                        class="form-control"
+                                        required
+                                    ><%= product.description %></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h2 class="section-title">Product Images</h2>
+
+                            <div class="form-group">
+                                <label>Current Images</label>
+                                <div class="image-preview-container" id="existingImagesContainer">
+                                    <% if(product.images && product.images.length > 0) { %>
+                                        <% product.images.forEach((image, index) => { %>
+                                            <div class="image-preview existing-image">
+                                                <img src="<%= image %>" alt="Product Image <%= index + 1 %>">
+                                                <button type="button" class="remove-image" data-image-path="<%= image %>">×</button>
+                                                <input type="hidden" name="existingImages" value="<%= image %>" class="existing-image-input">
+                                            </div>
+                                        <% }); %>
+                                    <% } else { %>
+                                        <p>No current images.</p>
+                                    <% } %>
+                                </div>
+                                <div class="help-text">Product must have at least one image. Click '×' to mark an image for removal.</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Upload New Images</label>
+                                <div class="image-upload-container" id="dropZone">
+                                    <div class="upload-icon">📷</div>
+                                    <div class="upload-text">
+                                        Drag & drop your images here or click to browse
+                                        <br>
+                                        <small>Optional: Add more images (Max 5 total, 5MB each)</small>
+                                    </div>
+                                    <input
+                                        type="file"
+                                        id="productImages"
+                                        name="productImages"
+                                        multiple
+                                        accept="image/*"
+                                        style="display: none;"
+                                    >
+                                    <button type="button" class="btn btn-secondary" id="browseBtn">Browse Files</button>
+                                </div>
+                                <div class="image-preview-container" id="newImagePreviewContainer"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h2 class="section-title">Specifications</h2>
+                            <div class="form-group">
+                                <label>Technical Specifications</label>
+                                <div class="help-text">Add key-value pairs for technical details (e.g., "Driver Size" - "40mm")</div>
+
+                                <div id="specificationsContainer" class="dynamic-field-container">
+                                    <% if (product.specifications && product.specifications.length > 0) { %>
+                                        <% product.specifications.forEach(spec => { %>
+                                            <div class="dynamic-field-group">
+                                                <div class="dynamic-field-key">
+                                                    <input type="text" name="specification_key[]" placeholder="Key" class="form-control" value="<%= spec.key %>">
+                                                </div>
+                                                <div class="dynamic-field-value">
+                                                    <input type="text" name="specification_value[]" placeholder="Value" class="form-control" value="<%= spec.value %>">
+                                                </div>
+                                                <button type="button" class="remove-field-btn">×</button>
+                                            </div>
+                                        <% }) %>
+                                    <% } else { %>
+                                         <div class="dynamic-field-group">
+                                            <div class="dynamic-field-key">
+                                                <input type="text" name="specification_key[]" placeholder="Key" class="form-control">
+                                            </div>
+                                            <div class="dynamic-field-value">
+                                                <input type="text" name="specification_value[]" placeholder="Value" class="form-control">
+                                            </div>
+                                            <button type="button" class="remove-field-btn" style="display:none;">×</button>
+                                        </div>
+                                    <% } %>
+                                </div>
+                                <button type="button" class="add-field-btn" id="addSpecificationBtn">+ Add Specification</button>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h2 class="section-title">Features</h2>
+                            <div class="form-group">
+                                <label>Product Features</label>
+                                <div class="help-text">Add key features of the product (e.g., "Noise Cancelling", "Bluetooth 5.0")</div>
+
+                                <div class="tags-input-container" id="featuresContainer">
+                                    <input type="text" class="tags-input" id="featureInput" placeholder="Type a feature and press Enter">
+                                </div>
+                                <input type="hidden" name="features" id="featuresHidden" value='<%- JSON.stringify(product.features || []) %>'>
+                            </div>
+                        </div>
+
+                        <div class="form-buttons">
+                            <button type="submit" class="btn btn-primary">Update Product</button>
+                            <a href="/admin/products" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            <% } else { %>
+                <p>Error: Product data is not available. Cannot render edit form.</p>
+                 <% } %>
+
+            <div class="footer">
+                <p>&copy; <%= new Date().getFullYear() %> Apex Headphones. All Rights Reserved.</p>
+            </div>
+        </div>
+    </div>
+
+<!-- Simple Image Cropper Modal -->
+<div id="cropperModal" class="simple-cropper-modal">
+    <div class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Crop Image</h3>
+                <button type="button" class="close-btn" id="closeCropperBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="cropper-container">
+                    <img id="cropperImage" alt="Image to crop">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelCropBtn">Cancel</button>
+                <button type="button" class="btn btn-primary" id="cropSaveBtn">Crop & Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Simple Image Upload and Cropping for Edit Product
+        const fileInput = document.getElementById('productImages');
+        const browseBtn = document.getElementById('browseBtn');
+        const dropZone = document.getElementById('dropZone');
+        const newImagePreviewContainer = document.getElementById('newImagePreviewContainer');
+        const cropperModal = document.getElementById('cropperModal');
+        const cropperImage = document.getElementById('cropperImage');
+
+        let cropper = null;
+        let currentFile = null;
+        let croppedFiles = [];
+
+        // File input events
+        if (browseBtn) {
+            browseBtn.addEventListener('click', () => fileInput.click());
+        }
+
+        if (fileInput) {
+            fileInput.addEventListener('change', handleFiles);
+        }
+
+        if (dropZone) {
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('active');
+            });
+
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('active');
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('active');
+                if (e.dataTransfer.files.length) {
+                    fileInput.files = e.dataTransfer.files;
+                    handleFiles();
+                }
+            });
+        }
+
+        // Handle file selection
+        function handleFiles() {
+            const files = Array.from(fileInput.files);
+            if (files.length === 0) return;
+
+            // Process first file for cropping
+            currentFile = files[0];
+            showCropperModal();
+        }
+
+        // Show cropper modal
+        function showCropperModal() {
+            if (!currentFile) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                cropperImage.src = e.target.result;
+                cropperModal.classList.add('show');
+
+                // Initialize cropper
+                if (cropper) {
+                    cropper.destroy();
+                }
+
+                cropper = new Cropper(cropperImage, {
+                    aspectRatio: 1,
+                    viewMode: 1,
+                    autoCropArea: 0.8,
+                    responsive: true,
+                    background: false,
+                    modal: true,
+                    guides: true,
+                    center: true,
+                    highlight: true,
+                    cropBoxMovable: true,
+                    cropBoxResizable: true,
+                    toggleDragModeOnDblclick: false
+                });
+            };
+            reader.readAsDataURL(currentFile);
+        }
+
+        // Modal event handlers
+        document.getElementById('closeCropperBtn').addEventListener('click', closeCropperModal);
+        document.getElementById('cancelCropBtn').addEventListener('click', closeCropperModal);
+        document.getElementById('cropSaveBtn').addEventListener('click', cropAndSave);
+
+        // Close modal
+        function closeCropperModal() {
+            cropperModal.classList.remove('show');
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+            currentFile = null;
+        }
+
+        // Crop and save
+        function cropAndSave() {
+            if (!cropper || !currentFile) return;
+
+            const canvas = cropper.getCroppedCanvas({
+                width: 800,
+                height: 800,
+                imageSmoothingEnabled: true,
+                imageSmoothingQuality: 'high'
+            });
+
+            canvas.toBlob(function(blob) {
+                const croppedFile = new File([blob], currentFile.name, {
+                    type: 'image/jpeg',
+                    lastModified: Date.now()
+                });
+
+                croppedFiles.push(croppedFile);
+                addImagePreview(croppedFile);
+                updateFileInput();
+                closeCropperModal();
+            }, 'image/jpeg', 0.9);
+        }
+
+        // Add image preview
+        function addImagePreview(file) {
+            const preview = document.createElement('div');
+            preview.className = 'image-preview new-image-preview';
+
+            const imageUrl = URL.createObjectURL(file);
+            preview.innerHTML = `
+                <img src="${imageUrl}" alt="New Product Image">
+                <button type="button" class="remove-image" onclick="removeImagePreview(this)">×</button>
+                <div class="image-info">
+                    <span class="image-name">${file.name}</span>
+                </div>
+            `;
+
+            newImagePreviewContainer.appendChild(preview);
+        }
+
+        // Remove image preview
+        function removeImagePreview(button) {
+            const preview = button.closest('.image-preview');
+            const index = Array.from(newImagePreviewContainer.children).indexOf(preview);
+
+            // Remove from croppedFiles array
+            croppedFiles.splice(index, 1);
+
+            // Remove preview element
+            preview.remove();
+
+            // Update file input
+            updateFileInput();
+        }
+
+        // Update file input with cropped files
+        function updateFileInput() {
+            const dt = new DataTransfer();
+            croppedFiles.forEach(file => dt.items.add(file));
+            fileInput.files = dt.files;
+        }
+
+        // Handling removal of Existing Images
+        document.querySelectorAll('#existingImagesContainer .remove-image').forEach(button => {
+            button.addEventListener('click', function() {
+                const imagePreviewDiv = this.closest('.image-preview.existing-image');
+                const hiddenInput = imagePreviewDiv.querySelector('.existing-image-input');
+                if (hiddenInput) {
+                    hiddenInput.remove(); // Remove the input field to prevent it from being submitted
+                }
+                imagePreviewDiv.remove(); // Remove the preview div
+            });
+        });
+
+
+        // Specifications Dynamic Fields
+        const specificationsContainer = document.getElementById('specificationsContainer');
+        const addSpecificationBtn = document.getElementById('addSpecificationBtn');
+
+        if (addSpecificationBtn) {
+            addSpecificationBtn.addEventListener('click', () => addSpecificationField());
+        }
+
+        function addSpecificationField(key = '', value = '') {
+            if (!specificationsContainer) return;
+            const fieldGroup = document.createElement('div');
+            fieldGroup.className = 'dynamic-field-group';
+            fieldGroup.innerHTML = `
+                <div class="dynamic-field-key">
+                    <input type="text" name="specification_key[]" placeholder="Key" class="form-control" value="${key}">
+                </div>
+                <div class="dynamic-field-value">
+                    <input type="text" name="specification_value[]" placeholder="Value" class="form-control" value="${value}">
+                </div>
+                <button type="button" class="remove-field-btn">×</button>
+            `;
+            specificationsContainer.appendChild(fieldGroup);
+            const removeBtn = fieldGroup.querySelector('.remove-field-btn');
+            if(removeBtn) removeBtn.addEventListener('click', () => fieldGroup.remove());
+        }
+
+        document.querySelectorAll('#specificationsContainer .remove-field-btn').forEach(button => {
+            if(!button.getAttribute('listenerAttached')) {
+                button.addEventListener('click', () => button.closest('.dynamic-field-group').remove());
+                button.setAttribute('listenerAttached', 'true');
+            }
+        });
+
+        // Only add an initial empty spec field if the product has no specifications (for edit page)
+        if (specificationsContainer && specificationsContainer.children.length === 0 && (!product || !product.specifications || product.specifications.length === 0)) {
+             addSpecificationField();
+        }
+
+
+        // Features Tags Input
+        const featuresContainer = document.getElementById('featuresContainer');
+        const featureInput = document.getElementById('featureInput');
+        const featuresHidden = document.getElementById('featuresHidden');
+        let featuresArray = [];
+
+        function renderFeatureTags() {
+            if (!featuresContainer || !featureInput || !featuresHidden) return;
+
+            while(featuresContainer.firstChild && featuresContainer.firstChild !== featureInput) {
+                 featuresContainer.removeChild(featuresContainer.firstChild);
+            }
+
+            featuresArray.forEach((feature, index) => {
+                const tag = document.createElement('div');
+                tag.className = 'tag';
+                const featureText = document.createTextNode(feature); // Sanitize
+                tag.appendChild(featureText);
+
+                const closeSpan = document.createElement('span');
+                closeSpan.className = 'tag-close';
+                closeSpan.setAttribute('data-index', index);
+                closeSpan.innerHTML = '×'; // Using HTML entity for cross
+                closeSpan.addEventListener('click', function() {
+                    removeFeatureTag(parseInt(this.getAttribute('data-index')));
+                });
+                tag.appendChild(closeSpan);
+                featuresContainer.insertBefore(tag, featureInput);
+            });
+            featuresHidden.value = JSON.stringify(featuresArray);
+        }
+
+        function addFeatureTag() {
+            if (!featureInput) return;
+            const value = featureInput.value.trim();
+            if (value && !featuresArray.includes(value)) {
+                featuresArray.push(value);
+                renderFeatureTags();
+                featureInput.value = '';
+            }
+        }
+
+        function removeFeatureTag(index) {
+            featuresArray.splice(index, 1);
+            renderFeatureTags();
+        }
+
+        if (featureInput) {
+            featureInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ',') {
+                    e.preventDefault();
+                    addFeatureTag();
+                }
+            });
+        }
+
+        if (featuresHidden && featuresHidden.value) {
+            try {
+                const existingFeatures = JSON.parse(featuresHidden.value);
+                if (Array.isArray(existingFeatures)) {
+                    featuresArray = existingFeatures;
+                }
+            } catch (e) {
+                console.error('Error parsing existing features:', e);
+                featuresArray = [];
+            }
+            renderFeatureTags(); // Call to render initially loaded features
+        }
+
+        // Simple form submission - let the form submit normally with cropped files
+        const editProductForm = document.getElementById('editProductForm');
+        if (editProductForm) {
+            editProductForm.addEventListener('submit', function(e) {
+                // Process specifications
+                const specKeys = document.querySelectorAll('input[name="specification_key[]"]');
+                const specValues = document.querySelectorAll('input[name="specification_value[]"]');
+                const specifications = [];
+
+                for (let i = 0; i < specKeys.length; i++) {
+                    const key = specKeys[i].value.trim();
+                    const value = specValues[i].value.trim();
+                    if (key && value) {
+                        specifications.push({ key, value });
+                    }
+                }
+
+                // Update specifications hidden field
+                let specificationsInput = editProductForm.querySelector('input[name="specifications"]');
+                if (!specificationsInput) {
+                    specificationsInput = document.createElement('input');
+                    specificationsInput.type = 'hidden';
+                    specificationsInput.name = 'specifications';
+                    editProductForm.appendChild(specificationsInput);
+                }
+                specificationsInput.value = JSON.stringify(specifications);
+
+                // Update features
+                if (featuresHidden) {
+                    featuresHidden.value = JSON.stringify(featuresArray);
+                }
+            });
+        }
+        // Auto-hide flash messages after 3 seconds
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.alert.alert-success, .alert.alert-error, .error-message');
+            alerts.forEach(alert => {
+                if(alert) alert.style.display = 'none';
+            });
+        }, 3000);
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .admin-layout {
+            /* display: grid; */ /* Commented out */
+            /* grid-template-columns: 250px 1fr; */ /* Commented out */
+            min-height: 100vh;
+            position: relative; /* Added */
+        }
+        .sidebar {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1.5rem;
+            position: fixed;
+            height: 100vh;
+            width: 250px;
+            overflow-y: auto;
+        }
+        .sidebar-header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .admin-logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        .admin-title {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 1.5rem;
+        }
+        .admin-profile {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin-bottom: 2rem;
+        }
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            background-color: #e74c3c;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 0.8rem;
+        }
+        .profile-info {
+            flex-grow: 1;
+        }
+        .profile-name {
+            font-weight: bold;
+            margin-bottom: 0.3rem;
+        }
+        .profile-role {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+        .nav-section {
+            margin-bottom: 1.5rem;
+        }
+        .nav-section-title {
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-bottom: 0.8rem;
+            padding-left: 0.5rem;
+        }
+        .nav-items {
+            list-style: none;
+            padding: 0;
+        }
+        .nav-items li {
+            margin-bottom: 0.3rem;
+        }
+        .nav-items a {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .nav-items a:hover, .nav-items a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .nav-icon {
+            margin-right: 0.8rem;
+            width: 20px;
+            text-align: center;
+        }
+        .main-content {
+            padding: 2rem;
+            margin-left: 250px; /* Stays to make space for fixed sidebar */
+            width: calc(100% - 250px); /* Added for explicit width calculation */
+            box-sizing: border-box;   /* Added to include padding in width calculation */
+        }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .stat-card-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        .stat-card-title {
+            font-size: 0.9rem;
+            color: #777;
+        }
+        .stat-card-icon {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(44, 62, 80, 0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        .stat-card-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        .stat-card-description {
+            font-size: 0.85rem;
+            color: #777;
+        }
+        .recent-orders {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .view-all {
+            font-size: 0.9rem;
+            color: #3498db;
+            text-decoration: none;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        thead {
+            background-color: rgba(44, 62, 80, 0.05);
+        }
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        th {
+            font-weight: 600;
+        }
+        tbody tr:hover {
+            background-color: rgba(44, 62, 80, 0.02);
+        }
+        .status {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+        .status-pending {
+            background-color: rgba(243, 156, 18, 0.1);
+            color: #f39c12;
+        }
+        .status-delivered {
+            background-color: rgba(39, 174, 96, 0.1);
+            color: #27ae60;
+        }
+        .status-shipped {
+            background-color: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+        }
+        .btn-link {
+            color: #3498db;
+            text-decoration: none;
+        }
+        .btn-link:hover {
+            text-decoration: underline;
+        }
+        .footer {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+            text-align: center;
+            color: #777;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="admin-logo">APEX</div>
+                <div class="admin-title">Admin Panel</div>
+            </div>
+            
+            <div class="admin-profile">
+                <div class="profile-avatar">
+                    <%= user.username.charAt(0).toUpperCase() %>
+                </div>
+                <div class="profile-info">
+                    <div class="profile-name"><%= user.username %></div>
+                    <div class="profile-role">Administrator</div>
+                </div>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Main</div>
+                <ul class="nav-items">
+                    <li>
+                        <a href="/admin/dashboard" class="active">
+                            <span class="nav-icon">📊</span>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/products">
+                            <span class="nav-icon">🎧</span>
+                            Products
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/categories">
+                            <span class="nav-icon">📑</span>
+                            Categories
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/users">
+                            <span class="nav-icon">👥</span>
+                            Customers
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="nav-section">
+                <ul class="nav-items">
+                    <li>
+                        <a href="/admin/logout">
+                            <span class="nav-icon">🚪</span>
+                            Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Dashboard</h1>
+                <div class="header-actions">
+                    <span id="currentDate"></span>
+                </div>
+            </div>
+            
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-card-title">Total Sales</div>
+                        <div class="stat-card-icon">💰</div>
+                    </div>
+                    <div class="stat-card-value">₹14,850</div>
+                    <div class="stat-card-description">+12% from last month</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-card-title">Total Orders</div>
+                        <div class="stat-card-icon">📦</div>
+                    </div>
+                    <div class="stat-card-value">248</div>
+                    <div class="stat-card-description">+5% from last month</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-card-title">New Customers</div>
+                        <div class="stat-card-icon">👥</div>
+                    </div>
+                    <div class="stat-card-value">64</div>
+                    <div class="stat-card-description">+8% from last month</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div class="stat-card-title">Product Inventory</div>
+                        <div class="stat-card-icon">🎧</div>
+                    </div>
+                    <div class="stat-card-value">15</div>
+                    <div class="stat-card-description">3 products low in stock</div>
+                </div>
+            </div>
+            
+            <div class="recent-orders">
+                <div class="section-header">
+                    <h2 class="section-title">Recent Orders</h2>
+                    <a href="/admin/orders" class="view-all">View All</a>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Product</th>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>#APX-2584</td>
+                            <td>Kannan S</td>
+                            <td>Apex Pro X Wireless</td>
+                            <td>May 28, 2025</td>
+                            <td>₹299.99</td>
+                            <td><span class="status status-delivered">Delivered</span></td>
+                            <td><a href="#" class="btn-link">Details</a></td>
+                        </tr>
+                        <tr>
+                            <td>#APX-2583</td>
+                            <td>Anaswar P K</td>
+                            <td>Apex Bass Boost Max</td>
+                            <td>May 27, 2025</td>
+                            <td>₹249.99</td>
+                            <td><span class="status status-shipped">Shipped</span></td>
+                            <td><a href="#" class="btn-link">Details</a></td>
+                        </tr>
+                        <tr>
+                            <td>#APX-2582</td>
+                            <td>Abhinand S</td>
+                            <td>Apex Studio Series</td>
+                            <td>May 27, 2025</td>
+                            <td>₹399.99</td>
+                            <td><span class="status status-pending">Pending</span></td>
+                            <td><a href="#" class="btn-link">Details</a></td>
+                        </tr>
+                        <tr>
+                            <td>#APX-2581</td>
+                            <td>Sanjay C Ravi</td>
+                            <td>Apex Sport Wireless</td>
+                            <td>May 26, 2025</td>
+                            <td>₹159.99</td>
+                            <td><span class="status status-delivered">Delivered</span></td>
+                            <td><a href="#" class="btn-link">Details</a></td>
+                        </tr>
+                        <tr>
+                            <td>#APX-2580</td>
+                            <td>Muhammed Al Fahad</td>
+                            <td>Apex Noise Cancelling Pro</td>
+                            <td>May 26, 2025</td>
+                            <td>₹349.99</td>
+                            <td><span class="status status-shipped">Shipped</span></td>
+                            <td><a href="#" class="btn-link">Details</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="footer">
+                <p>&copy; <%= new Date().getFullYear() %> Apex Headphones. All Rights Reserved.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set current date
+            const currentDateElement = document.getElementById('currentDate');
+            if (currentDateElement) { // Check if element exists
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                const currentDate = new Date().toLocaleDateString('en-US', options);
+                currentDateElement.textContent = currentDate;
+            }
+        });
+    </script>
+</body>
+</html>

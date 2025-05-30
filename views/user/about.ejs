@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Apex Headphones</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f9f9f9;
+        }
+        
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        
+        .logo span {
+            color: #e74c3c;
+        }
+        
+        .nav-menu {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-item {
+            margin-left: 30px;
+            font-weight: 500;
+        }
+        
+        .nav-item a:hover {
+            color: #e74c3c;
+        }
+        
+        .nav-item.active a {
+            color: #e74c3c;
+        }
+        
+        .user-actions {
+            display: flex;
+            align-items: center;
+        }
+        
+        .cart-icon, .user-icon {
+            position: relative;
+            margin-left: 20px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #e74c3c;
+            color: white;
+            font-size: 12px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Page Header */
+        .page-header {
+            background-color: #2c3e50;
+            color: #fff;
+            padding: 60px 0;
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .page-header h1 {
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+        
+        .page-header p {
+            font-size: 18px;
+            max-width: 700px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        
+        /* About Section */
+        .about-section {
+            margin-bottom: 60px;
+        }
+        
+        .section-title {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background-color: #e74c3c;
+        }
+        
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+        
+        .about-image {
+            overflow: hidden;
+            border-radius: 8px;
+        }
+        
+        .about-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .about-text {
+            font-size: 16px;
+            line-height: 1.8;
+        }
+        
+        .about-text p {
+            margin-bottom: 20px;
+        }
+        
+        /* Mission Section */
+        .mission-section {
+            background-color: #f8f9fa;
+            padding: 60px 0;
+            margin-bottom: 60px;
+        }
+        
+        .mission-content {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .mission-content h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .mission-content h2:after {
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .mission-content p {
+            margin-bottom: 20px;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+        
+        /* Team Section */
+        .team-section {
+            margin-bottom: 60px;
+        }
+        
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .team-member {
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .team-member:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+        
+        .member-image {
+            height: 250px;
+            overflow: hidden;
+        }
+        
+        .member-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .member-info {
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .member-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        
+        .member-position {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 15px;
+        }
+        
+        .member-bio {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #555;
+        }
+        
+        /* Stats Section */
+        .stats-section {
+            background-color: #2c3e50;
+            color: #fff;
+            padding: 60px 0;
+            margin-bottom: 60px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            text-align: center;
+        }
+        
+        .stat-item {
+            padding: 20px;
+        }
+        
+        .stat-number {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #e74c3c;
+        }
+        
+        .stat-label {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 60px 0 0;
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-widget h4 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-widget h4:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 30px;
+            height: 2px;
+            background-color: #e74c3c;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: #bdc3c7;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: #e74c3c;
+        }
+        
+        .footer-bottom {
+            background-color: #1a252f;
+            padding: 20px 0;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        .footer-bottom p {
+            margin: 0;
+            color: #bdc3c7;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .about-content,
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .about-image {
+                order: -1;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .page-header {
+                padding: 40px 0;
+            }
+            
+            .page-header h1 {
+                font-size: 28px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="/" class="logo">APEX<span>.</span></a>
+            
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="/">Home</a></li>
+                    <li class="nav-item"><a href="/headphones">Headphones</a></li>
+                    <li class="nav-item active"><a href="/about">About Us</a></li>
+                    <li class="nav-item"><a href="/contact">Contact</a></li>
+                </ul>
+            </nav>
+            
+            <div class="user-actions">
+                <div class="cart-icon">
+                    🛒
+                    <span class="cart-count">0</span>
+                </div>
+                <% if (locals.user) { %>
+                    <a href="/account" class="user-icon">👤</a>
+                <% } else { %>
+                    <a href="/login" class="user-icon">🔑</a>
+                <% } %>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>About Apex</h1>
+            <p>Discover our story, mission, and the team behind the premium audio experience.</p>
+        </div>
+    </section>
+    
+    <!-- About Section -->
+    <section class="about-section">
+        <div class="container">
+            <h2 class="section-title">Our Story</h2>
+            
+            <div class="about-content">
+                <div class="about-text">
+                    <p>Founded in 2018, Apex was born from a simple vision: to create headphones that deliver exceptional sound quality without compromise. Our founder, Alex Chen, an audio engineer with over 15 years of experience, was frustrated with the market's offerings – headphones either sounded great but were uncomfortable, or were comfortable but compromised on sound quality.</p>
+                    
+                    <p>This frustration led to the creation of Apex's first prototype, developed in Alex's garage workshop. After two years of research, testing, and refinement, the first Apex headphones were launched to critical acclaim in the audio community.</p>
+                    
+                    <p>Today, Apex has grown from a one-person operation to a team of passionate audio enthusiasts, engineers, and designers dedicated to pushing the boundaries of what's possible in personal audio. Our headquarters in Silicon Valley houses our research lab, design studio, and quality control facilities where every pair of Apex headphones is meticulously crafted and tested.</p>
+                </div>
+                
+                <div class="about-image">
+                    <img src="https://via.placeholder.com/600x400" alt="Apex workshop">
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Mission Section -->
+    <section class="mission-section">
+        <div class="container">
+            <div class="mission-content">
+                <h2 class="section-title">Our Mission</h2>
+                
+                <p>At Apex, our mission is to elevate the listening experience through innovative design, premium materials, and uncompromising sound quality. We believe that music is one of life's greatest pleasures, and everyone deserves to experience it at its fullest potential.</p>
+                
+                <p>We're committed to sustainable practices, ensuring our products are built to last, and implementing eco-friendly manufacturing processes wherever possible. Our packaging is 100% recyclable, and we're constantly researching ways to reduce our environmental footprint.</p>
+                
+                <p>Beyond creating exceptional headphones, we're dedicated to giving back to the community. Through our Apex Sound Foundation, we donate headphones to music education programs in underserved schools and support emerging artists through our annual grant program.</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Team Section -->
+    <section class="team-section">
+        <div class="container">
+            <h2 class="section-title">Meet Our Team</h2>
+            
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="member-image">
+                        <img src="https://via.placeholder.com/300x300" alt="Alex Chen">
+                    </div>
+                    <div class="member-info">
+                        <h3 class="member-name">Alex Chen</h3>
+                        <p class="member-position">Founder & CEO</p>
+                        <p class="member-bio">With 15+ years in audio engineering, Alex leads the company's vision and product innovation strategy.</p>
+                    </div>
+                </div>
+                
+                <div class="team-member">
+                    <div class="member-image">
+                        <img src="https://via.placeholder.com/300x300" alt="Sarah Kim">
+                    </div>
+                    <div class="member-info">
+                        <h3 class="member-name">Sarah Kim</h3>
+                        <p class="member-position">Head of Design</p>
+                        <p class="member-bio">Sarah brings her background in industrial design to create headphones that are both beautiful and functional.</p>
+                    </div>
+                </div>
+                
+                <div class="team-member">
+                    <div class="member-image">
+                        <img src="https://via.placeholder.com/300x300" alt="Marcus Johnson">
+                    </div>
+                    <div class="member-info">
+                        <h3 class="member-name">Marcus Johnson</h3>
+                        <p class="member-position">Chief Audio Engineer</p>
+                        <p class="member-bio">A true audiophile, Marcus oversees the sound tuning process for every Apex product.</p>
+                    </div>
+                </div>
+                
+                <div class="team-member">
+                    <div class="member-image">
+                        <img src="https://via.placeholder.com/300x300" alt="Priya Patel">
+                    </div>
+                    <div class="member-info">
+                        <h3 class="member-name">Priya Patel</h3>
+                        <p class="member-position">Head of Customer Experience</p>
+                        <p class="member-bio">Priya ensures that every customer interaction with Apex is exceptional from purchase to support.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">12</div>
+                    <div class="stat-label">Countries Shipped To</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-number">50,000+</div>
+                    <div class="stat-label">Happy Customers</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-number">15</div>
+                    <div class="stat-label">Audio Awards</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-number">8</div>
+                    <div class="stat-label">Headphone Models</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-widget">
+                    <h4>About Apex</h4>
+                    <p>Apex is a premium headphone brand dedicated to providing the best audio experience through innovative technology and superior design.</p>
+                </div>
+                
+                <div class="footer-widget">
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/headphones">Headphones</a></li>
+                        <li><a href="/about">About Us</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-widget">
+                    <h4>Customer Service</h4>
+                    <ul class="footer-links">
+                        <li><a href="/faq">FAQ</a></li>
+                        <li><a href="/shipping">Shipping & Returns</a></li>
+                        <li><a href="/warranty">Warranty</a></li>
+                        <li><a href="/privacy">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-widget">
+                    <h4>Contact Us</h4>
+                    <ul class="footer-links">
+                        <li>Email: support@apex.com</li>
+                        <li>Phone: (555) 123-4567</li>
+                        <li>Address: 123 Audio Lane, Sound City, SC 12345</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <div class="container">
+                <p>&copy; <%= new Date().getFullYear() %> Apex Headphones. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

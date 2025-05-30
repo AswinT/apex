@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css">
+    <style>
+        .admin-layout {
+            /* display: grid; */ /* Commented out */
+            /* grid-template-columns: 250px 1fr; */ /* Commented out */
+            min-height: 100vh;
+            position: relative; /* Added */
+        }
+        .sidebar {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1.5rem;
+            position: fixed;
+            height: 100vh;
+            width: 250px;
+            overflow-y: auto;
+        }
+        .sidebar-header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .admin-logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        .admin-title {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 1.5rem;
+        }
+        .admin-profile {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin-bottom: 2rem;
+        }
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            background-color: #e74c3c;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 0.8rem;
+        }
+        .profile-info {
+            flex-grow: 1;
+        }
+        .profile-name {
+            font-weight: bold;
+            margin-bottom: 0.3rem;
+        }
+        .profile-role {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+        .nav-section {
+            margin-bottom: 1.5rem;
+        }
+        .nav-section-title {
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-bottom: 0.8rem;
+            padding-left: 0.5rem;
+        }
+        .nav-items {
+            list-style: none;
+            padding: 0;
+        }
+        .nav-items li {
+            margin-bottom: 0.3rem;
+        }
+        .nav-items a {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .nav-items a:hover, .nav-items a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .nav-icon {
+            margin-right: 0.8rem;
+            width: 20px;
+            text-align: center;
+        }
+        .main-content {
+            padding: 2rem;
+            margin-left: 250px; /* Stays to make space for fixed sidebar */
+            width: calc(100% - 250px); /* Added for explicit width calculation */
+            box-sizing: border-box;   /* Added to include padding in width calculation */
+        }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        .categories-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .categories-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .categories-table th {
+            background-color: rgba(44, 62, 80, 0.05);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .categories-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        .categories-table tr:last-child td {
+            border-bottom: none;
+        }
+        .categories-table tr:hover {
+            background-color: rgba(44, 62, 80, 0.02);
+        }
+        .category-status {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+        .status-listed {
+            background-color: rgba(39, 174, 96, 0.1);
+            color: #27ae60;
+        }
+        .status-unlisted {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: #e74c3c;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .action-btn {
+            padding: 0.5rem 0.8rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .btn-edit {
+            background-color: #3498db;
+            color: white;
+        }
+        .btn-edit:hover {
+            background-color: #2980b9;
+        }
+        .btn-unlist {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .btn-unlist:hover {
+            background-color: #c0392b;
+        }
+        .btn-list {
+            background-color: #27ae60;
+            color: white;
+        }
+        .btn-list:hover {
+            background-color: #219653;
+        }
+        .btn-add {
+            background-color: #2c3e50;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-add:hover {
+            background-color: #1a252f;
+        }
+        .footer {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+            text-align: center;
+            color: #777;
+            font-size: 0.9rem;
+        }
+        .alert {
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #777;
+        }
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #ddd;
+        }
+        
+        /* Search Styles */
+        .search-container {
+            margin-bottom: 1.5rem;
+        }
+        
+        .search-form {
+            width: 100%;
+        }
+        
+        .search-input-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .search-input {
+            flex-grow: 1;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .search-btn {
+            padding: 0.8rem 1.2rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            white-space: nowrap;
+        }
+        
+        /* Pagination Styles */
+        .pagination-container {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: #f9f9f9;
+            border-radius: 0 0 8px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            border-top: 1px solid #eee;
+        }
+        
+        .pagination-info {
+            color: #777;
+            font-size: 0.9rem;
+        }
+        
+        .pagination-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+        
+        .pagination-btn {
+            padding: 0.5rem 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            color: #333;
+            text-decoration: none;
+            font-size: 0.9rem;
+            min-width: 2.5rem;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        
+        .pagination-btn:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .pagination-btn.active {
+            background-color: #2c3e50;
+            color: white;
+            border-color: #2c3e50;
+        }
+        
+        .pagination-btn.disabled {
+            opacity: 0.5;
+            cursor: default;
+            pointer-events: none;
+        }
+        
+        .pagination-ellipsis {
+            padding: 0.5rem 0.5rem;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="admin-logo">APEX</div>
+                <div class="admin-title">Admin Panel</div>
+            </div>
+            
+            <div class="admin-profile">
+                <div class="profile-avatar">
+                    <%= user.username.charAt(0).toUpperCase() %>
+                </div>
+                <div class="profile-info">
+                    <div class="profile-name"><%= user.username %></div>
+                    <div class="profile-role">Administrator</div>
+                </div>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Main</div>
+                <ul class="nav-items">
+                    <li>
+                        <a href="/admin/dashboard">
+                            <span class="nav-icon">📊</span>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/orders">
+                            <span class="nav-icon">📦</span>
+                            Orders
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/products">
+                            <span class="nav-icon">🎧</span>
+                            Products
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/categories" class="active">
+                            <span class="nav-icon">🏷️</span>
+                            Categories
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/users">
+                            <span class="nav-icon">👥</span>
+                            Users
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Settings</div>
+                <ul class="nav-items">
+                    <li>
+                        <a href="/admin/profile">
+                            <span class="nav-icon">👤</span>
+                            Profile
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/settings">
+                            <span class="nav-icon">⚙️</span>
+                            Settings
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/logout">
+                            <span class="nav-icon">🚪</span>
+                            Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Categories</h1>
+                <div class="header-actions">
+                    <a href="/admin/categories/add" class="btn-add">+ Add Category</a>
+                </div>
+            </div>
+            
+            <div class="search-container">
+                <form action="/admin/categories" method="GET" class="search-form">
+                    <div class="search-input-group">
+                        <input 
+                            type="text" 
+                            name="search" 
+                            placeholder="Search categories..." 
+                            class="search-input"
+                            value="<%= search %>"
+                        >
+                        <button type="submit" class="search-btn btn-primary">Search</button>
+                        <% if (search) { %>
+                            <a href="/admin/categories" class="search-btn btn-secondary">Clear</a>
+                        <% } %>
+                    </div>
+                </form>
+            </div>
+            
+            <% if (messages.success && messages.success.length > 0) { %>
+                <div class="alert alert-success">
+                    <%= messages.success[0] %>
+                </div>
+            <% } %>
+            
+            <% if (messages.error && messages.error.length > 0) { %>
+                <div class="alert alert-error">
+                    <%= messages.error[0] %>
+                </div>
+            <% } %>
+            
+            <div class="categories-container">
+                <% if (categories && categories.length > 0) { %>
+                    <table class="categories-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                                <th>Created On</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% categories.forEach(category => { %>
+                                <tr>
+                                    <td><%= category.name %></td>
+                                    <td><%= category.description || 'No description' %></td>
+                                    <td>
+                                        <% if (category.isListed) { %>
+                                            <span class="category-status status-listed">Listed</span>
+                                        <% } else { %>
+                                            <span class="category-status status-unlisted">Unlisted</span>
+                                        <% } %>
+                                    </td>
+                                    <td><%= new Date(category.createdAt).toLocaleDateString('en-US', { 
+                                        year: 'numeric', 
+                                        month: 'short', 
+                                        day: 'numeric' 
+                                    }) %></td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <a href="/admin/categories/edit/<%= category._id %>" class="action-btn btn-edit">Edit</a>
+                                            <button class="action-btn <%= category.isListed ? 'btn-unlist' : 'btn-list' %>" data-category-id="<%= category._id %>" data-action="<%= category.isListed ? 'unlist' : 'list' %>" data-name="<%= category.name %>">
+                                                <%= category.isListed ? 'Unlist' : 'List' %>
+                                            </button>
+                                            <button class="action-btn btn-delete" data-category-id="<%= category._id %>" data-name="<%= category.name %>">
+                                                Delete
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                    
+                    <% if (pagination && pagination.totalPages > 1) { %>
+                        <div class="pagination-container">
+                            <div class="pagination-info">
+                                Showing <%= (pagination.currentPage - 1) * pagination.limit + 1 %> to 
+                                <%= Math.min(pagination.currentPage * pagination.limit, pagination.totalItems) %> of 
+                                <%= pagination.totalItems %> categories
+                            </div>
+                            <div class="pagination-controls">
+                                <% if (pagination.hasPrevPage) { %>
+                                    <a href="/admin/categories?page=<%= pagination.prevPage %><%= search ? '&search=' + search : '' %>" class="pagination-btn">&laquo; Previous</a>
+                                <% } else { %>
+                                    <span class="pagination-btn disabled">&laquo; Previous</span>
+                                <% } %>
+                                
+                                <% 
+                                let startPage = Math.max(1, pagination.currentPage - 2);
+                                let endPage = Math.min(pagination.totalPages, pagination.currentPage + 2);
+                                
+                                if (endPage - startPage < 4) {
+                                    if (startPage === 1) {
+                                        endPage = Math.min(pagination.totalPages, startPage + 4);
+                                    } else {
+                                        startPage = Math.max(1, endPage - 4);
+                                    }
+                                }
+                                
+                                if (startPage > 1) { %>
+                                    <a href="/admin/categories?page=1<%= search ? '&search=' + search : '' %>" class="pagination-btn">1</a>
+                                    <% if (startPage > 2) { %>
+                                        <span class="pagination-ellipsis">...</span>
+                                    <% } %>
+                                <% } %>
+                                
+                                <% for(let i = startPage; i <= endPage; i++) { %>
+                                    <% if (i === pagination.currentPage) { %>
+                                        <span class="pagination-btn active"><%= i %></span>
+                                    <% } else { %>
+                                        <a href="/admin/categories?page=<%= i %><%= search ? '&search=' + search : '' %>" class="pagination-btn"><%= i %></a>
+                                    <% } %>
+                                <% } %>
+                                
+                                <% if (endPage < pagination.totalPages) { %>
+                                    <% if (endPage < pagination.totalPages - 1) { %>
+                                        <span class="pagination-ellipsis">...</span>
+                                    <% } %>
+                                    <a href="/admin/categories?page=<%= pagination.totalPages %><%= search ? '&search=' + search : '' %>" class="pagination-btn"><%= pagination.totalPages %></a>
+                                <% } %>
+                                
+                                <% if (pagination.hasNextPage) { %>
+                                    <a href="/admin/categories?page=<%= pagination.nextPage %><%= search ? '&search=' + search : '' %>" class="pagination-btn">Next &raquo;</a>
+                                <% } else { %>
+                                    <span class="pagination-btn disabled">Next &raquo;</span>
+                                <% } %>
+                            </div>
+                        </div>
+                    <% } %>
+                <% } else { %>
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🏷️</div>
+                        <h3>No Categories Found</h3>
+                        <p>Get started by adding your first category</p>
+                        <a href="/admin/categories/add" class="btn-add">Add Category</a>
+                    </div>
+                <% } %>
+            </div>
+            
+            <div class="footer">
+                <p>&copy; <%= new Date().getFullYear() %> Apex Headphones. All Rights Reserved.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Category List/Unlist functionality with SweetAlert2
+            const toggleButtons = document.querySelectorAll('.btn-list, .btn-unlist');
+            
+            toggleButtons.forEach(button => {
+                button.addEventListener('click', async function() {
+                    const categoryId = this.getAttribute('data-category-id');
+                    const categoryName = this.getAttribute('data-name');
+                    const action = this.getAttribute('data-action');
+                    
+                    // SweetAlert2 confirmation
+                    const result = await Swal.fire({
+                        title: `${action.charAt(0).toUpperCase() + action.slice(1)} Category?`,
+                        text: `Are you sure you want to ${action} "${categoryName}"?`,
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: `Yes, ${action} it!`
+                    });
+                    
+                    if (result.isConfirmed) {
+                        try {
+                            // Send request to toggle list status
+                            const response = await fetch(`/admin/categories/toggle-list/${categoryId}`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json'
+                                }
+                            });
+                            
+                            if (response.ok) {
+                                const responseText = await response.text();
+                                console.log('Raw response:', responseText);
+                                
+                                try {
+                                    // Parse the text into JSON if possible
+                                    const data = responseText ? JSON.parse(responseText) : {};
+                                    
+                                    if (data && data.success) {
+                                        // Success notification
+                                        await Swal.fire({
+                                            title: 'Success!',
+                                            text: data.message || `Category ${action}ed successfully.`,
+                                            icon: 'success',
+                                            timer: 2000,
+                                            showConfirmButton: false
+                                        });
+                                    } else {
+                                        // Server returned JSON but with success: false
+                                        console.error('Server reported error:', data);
+                                        await Swal.fire({
+                                            title: 'Error!',
+                                            text: data?.message || `Failed to ${action} category.`,
+                                            icon: 'error'
+                                        });
+                                    }
+                                } catch (jsonError) {
+                                    // Response was OK but JSON parsing failed
+                                    console.error('Error parsing JSON response:', jsonError);
+                                    
+                                    // Assume success since HTTP response was OK
+                                    await Swal.fire({
+                                        title: 'Success!',
+                                        text: `Category ${action}ed successfully.`,
+                                        icon: 'success',
+                                        timer: 2000,
+                                        showConfirmButton: false
+                                    });
+                                }
+                                
+                                // Reload the page regardless of JSON parsing
+                                window.location.reload();
+                            } else {
+                                // HTTP error status code
+                                console.error('HTTP error:', response.status);
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: `Failed to ${action} category. Status: ${response.status}`,
+                                    icon: 'error'
+                                });
+                            }
+                        } catch (error) {
+                            console.error(`Error toggling category status:`, error);
+                            Swal.fire({
+                                title: 'Error!',
+                                text: `An error occurred. Could not ${action} category.`,
+                                icon: 'error'
+                            });
+                        }
+                    }
+                });
+            });
+            
+            // Category Delete functionality with SweetAlert2
+            const deleteButtons = document.querySelectorAll('.btn-delete');
+            
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', async function() {
+                    const categoryId = this.getAttribute('data-category-id');
+                    const categoryName = this.getAttribute('data-name');
+                    
+                    // SweetAlert2 confirmation
+                    const result = await Swal.fire({
+                        title: 'Are you sure?',
+                        text: `Do you really want to delete "${categoryName}"? This action cannot be undone!`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Yes, delete it!'
+                    });
+                    
+                    if (result.isConfirmed) {
+                        try {
+                            const response = await fetch(`/admin/categories/delete/${categoryId}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json'
+                                }
+                            });
+                            
+                            if (response.ok) {
+                                const responseText = await response.text();
+                                console.log('Raw response:', responseText);
+                                
+                                try {
+                                    // Parse the text into JSON if possible
+                                    const data = responseText ? JSON.parse(responseText) : {};
+                                    
+                                    if (data && data.success) {
+                                        // Success notification
+                                        await Swal.fire({
+                                            title: 'Deleted!',
+                                            text: data.message || 'Category has been deleted.',
+                                            icon: 'success',
+                                            timer: 2000,
+                                            showConfirmButton: false
+                                        });
+                                    } else {
+                                        // Server returned JSON but with success: false
+                                        console.error('Server reported error:', data);
+                                        await Swal.fire({
+                                            title: 'Error!',
+                                            text: data?.message || 'Failed to delete category.',
+                                            icon: 'error'
+                                        });
+                                    }
+                                } catch (jsonError) {
+                                    // Response was OK but JSON parsing failed
+                                    console.error('Error parsing JSON response:', jsonError);
+                                    
+                                    // Assume success since HTTP response was OK
+                                    await Swal.fire({
+                                        title: 'Deleted!',
+                                        text: 'Category has been deleted.',
+                                        icon: 'success',
+                                        timer: 2000,
+                                        showConfirmButton: false
+                                    });
+                                }
+                                
+                                // Reload the page regardless of JSON parsing
+                                window.location.reload();
+                            } else {
+                                // HTTP error status code
+                                console.error('HTTP error:', response.status);
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: `Failed to delete category. Status: ${response.status}`,
+                                    icon: 'error'
+                                });
+                            }
+                        } catch (err) {
+                            console.error(`Error deleting category:`, err);
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'An error occurred. Could not delete category.',
+                                icon: 'error'
+                            });
+                        }
+                    }
+                });
+            });
+            
+            // Auto-hide flash messages after 3 seconds
+            setTimeout(() => {
+                const alerts = document.querySelectorAll('.alert');
+                alerts.forEach(alert => {
+                    alert.style.display = 'none';
+                });
+            }, 3000);
+        });
+    </script>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
+</body>
+</html>

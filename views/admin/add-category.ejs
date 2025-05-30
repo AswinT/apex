@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .admin-layout {
+            /* display: grid; */ /* Commented out */
+            /* grid-template-columns: 250px 1fr; */ /* Commented out */
+            min-height: 100vh;
+            position: relative; /* Added */
+        }
+        .sidebar {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1.5rem;
+            position: fixed;
+            height: 100vh;
+            width: 250px;
+            overflow-y: auto;
+        }
+        .sidebar-header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .admin-logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        .admin-title {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 1.5rem;
+        }
+        .admin-profile {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin-bottom: 2rem;
+        }
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            background-color: #e74c3c;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 0.8rem;
+        }
+        .profile-info {
+            flex-grow: 1;
+        }
+        .profile-name {
+            font-weight: bold;
+            margin-bottom: 0.3rem;
+        }
+        .profile-role {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+        .nav-section {
+            margin-bottom: 1.5rem;
+        }
+        .nav-section-title {
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-bottom: 0.8rem;
+            padding-left: 0.5rem;
+        }
+        .nav-items {
+            list-style: none;
+            padding: 0;
+        }
+        .nav-items li {
+            margin-bottom: 0.3rem;
+        }
+        .nav-items a {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .nav-items a:hover, .nav-items a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .nav-icon {
+            margin-right: 0.8rem;
+            width: 20px;
+            text-align: center;
+        }
+        .main-content {
+            padding: 2rem;
+            margin-left: 250px; /* Stays to make space for fixed sidebar */
+            width: calc(100% - 250px); /* Added for explicit width calculation */
+            box-sizing: border-box;   /* Added to include padding in width calculation */
+        }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        .form-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            max-width: 700px; /* This style is specific to the form page */
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        .form-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .btn-primary {
+            background-color: #2c3e50;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #1a252f;
+        }
+        .btn-secondary {
+            background-color: #e0e0e0;
+            color: #333;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        .btn-secondary:hover {
+            background-color: #d0d0d0;
+        }
+        .footer {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+            text-align: center;
+            color: #777;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="admin-logo">APEX</div>
+                <div class="admin-title">Admin Panel</div>
+            </div>
+            
+            <div class="admin-profile">
+                <div class="profile-avatar">
+                    <%= user.username.charAt(0).toUpperCase() %>
+                </div>
+                <div class="profile-info">
+                    <div class="profile-name"><%= user.username %></div>
+                    <div class="profile-role">Administrator</div>
+                </div>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Main</div>
+                <ul class="nav-items">
+                    <li>
+                        <a href="/admin/dashboard">
+                            <span class="nav-icon">📊</span>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/orders">
+                            <span class="nav-icon">📦</span>
+                            Orders
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/products">
+                            <span class="nav-icon">🎧</span>
+                            Products
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/categories" class="active"> <span class="nav-icon">🏷️</span>
+                            Categories
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/users">
+                            <span class="nav-icon">👥</span>
+                            Users
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Settings</div>
+                <ul class="nav-items">
+                    <li>
+                        <a href="/admin/profile">
+                            <span class="nav-icon">👤</span>
+                            Profile
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/settings">
+                            <span class="nav-icon">⚙️</span>
+                            Settings
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/logout">
+                            <span class="nav-icon">🚪</span>
+                            Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Add Category</h1>
+            </div>
+            
+            <div class="form-container">
+                <form action="/admin/categories/add" method="POST">
+                    <% if (locals.messages && messages.error && messages.error.length > 0) { %> <%# Changed to check messages.error for form validation errors %>
+                        <div class="alert alert-error" style="margin-bottom: 1rem;"> <%# Used alert classes for consistency %>
+                            <%= messages.error[0] %>
+                        </div>
+                    <% } else if (error) { %> <%# Fallback for 'error' variable if still used by controller specifically for this form %>
+                        <div class="error-message" style="margin-bottom: 1rem;">
+                            <%= error %>
+                        </div>
+                    <% } %>
+                    
+                    <% if (locals.messages && messages.success && messages.success.length > 0) { %> <%# Added success message display %>
+                        <div class="alert alert-success" style="margin-bottom: 1rem;">
+                             <%= messages.success[0] %>
+                        </div>
+                    <% } %>
+
+                    <div class="form-group">
+                        <label for="name">Category Name*</label>
+                        <input 
+                            type="text" 
+                            id="name" 
+                            name="name" 
+                            class="form-control" 
+                            required
+                            value="<%= locals.formData ? formData.name : '' %>"
+                        >
+                        <small>E.g., Over-ear, In-ear, Wireless, etc.</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea 
+                            id="description" 
+                            name="description" 
+                            class="form-control"
+                        ><%= locals.formData ? formData.description : '' %></textarea>
+                        <small>A brief description of the category (optional)</small>
+                    </div>
+                    
+                    <div class="form-buttons">
+                        <button type="submit" class="btn btn-primary">Add Category</button>
+                        <a href="/admin/categories" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="footer">
+                <p>&copy; <%= new Date().getFullYear() %> Apex Headphones. All Rights Reserved.</p>
+            </div>
+        </div>
+    </div>
+    </body>
+</html>

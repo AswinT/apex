@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css">
+    <style>
+        .admin-layout {
+            /* display: grid; */ /* Commented out */
+            /* grid-template-columns: 250px 1fr; */ /* Commented out */
+            min-height: 100vh;
+            position: relative; /* Added */
+        }
+        .sidebar {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1.5rem;
+            position: fixed;
+            height: 100vh;
+            width: 250px;
+            overflow-y: auto;
+        }
+        .sidebar-header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .admin-logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        .admin-title {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 1.5rem;
+        }
+        .admin-profile {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin-bottom: 2rem;
+        }
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            background-color: #e74c3c;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 0.8rem;
+        }
+        .profile-info {
+            flex-grow: 1;
+        }
+        .profile-name {
+            font-weight: bold;
+            margin-bottom: 0.3rem;
+        }
+        .profile-role {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+        .nav-section {
+            margin-bottom: 1.5rem;
+        }
+        .nav-section-title {
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-bottom: 0.8rem;
+            padding-left: 0.5rem;
+        }
+        .nav-items {
+            list-style: none;
+            padding: 0;
+        }
+        .nav-items li {
+            margin-bottom: 0.3rem;
+        }
+        .nav-items a {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .nav-items a:hover, .nav-items a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .nav-icon {
+            margin-right: 0.8rem;
+            width: 20px;
+            text-align: center;
+        }
+        .main-content {
+            padding: 2rem;
+            margin-left: 250px; /* Stays to make space for fixed sidebar */
+            width: calc(100% - 250px); /* Added for explicit width calculation */
+            box-sizing: border-box;   /* Added to include padding in width calculation */
+        }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        /* Search Styles */
+        .search-container {
+            margin-bottom: 1.5rem;
+        }
+        
+        .search-form {
+            width: 100%;
+        }
+        
+        .search-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            align-items: flex-start;
+        }
+        
+        .search-input-group {
+            flex: 3;
+            min-width: 250px;
+        }
+        
+        .filter-input-group {
+            flex: 2;
+            min-width: 200px;
+        }
+        
+        .action-input-group {
+            display: flex;
+            gap: 0.5rem;
+            flex: 1;
+            min-width: 180px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .filter-select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            background-color: white;
+        }
+        
+        .search-btn {
+            padding: 0.8rem 1.2rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            white-space: nowrap;
+        }
+        
+        .btn-primary {
+            background-color: #2c3e50;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #1a252f;
+        }
+        
+        .btn-secondary {
+            background-color: #e0e0e0;
+            color: #333;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #d0d0d0;
+        }
+        
+        .btn-add {
+            background-color: #2c3e50;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-add:hover {
+            background-color: #1a252f;
+        }
+        
+        /* Products Grid */
+        .products-container {
+            margin-bottom: 2rem;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .product-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .product-image {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        
+        .product-card:hover .product-image img {
+            transform: scale(1.05);
+        }
+        
+        .product-badges {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .product-badge {
+            padding: 0.3rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        
+        .badge-featured {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .badge-sale {
+            background-color: #27ae60;
+            color: white;
+        }
+        
+        .badge-stock {
+            background-color: #f39c12;
+            color: white;
+        }
+        
+        .product-content {
+            padding: 1.2rem;
+        }
+        
+        .product-category {
+            font-size: 0.8rem;
+            color: #777;
+            margin-bottom: 0.5rem;
+        }
+        
+        .product-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .product-brand {
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 0.8rem;
+        }
+        
+        .product-price-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .product-price {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        
+        .product-sale-price {
+            color: #e74c3c;
+        }
+        
+        .product-original-price {
+            font-size: 0.9rem;
+            text-decoration: line-through;
+            color: #777;
+        }
+        
+        .product-stock {
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+        
+        .product-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .product-action {
+            padding: 0.5rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            flex: 1;
+            text-align: center;
+            text-decoration: none;
+        }
+        
+        .action-edit {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .action-edit:hover {
+            background-color: #2980b9;
+        }
+        
+        .action-delete { /* This class was used for the list/unlist button on product listing */
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .action-delete:hover {
+            background-color: #c0392b;
+        }
+        
+        .action-view {
+            background-color: #2c3e50;
+            color: white;
+        }
+        
+        .action-view:hover {
+            background-color: #1a252f;
+        }
+        
+        /* Pagination Styles */
+        .pagination-container {
+            margin-top: 2rem;
+            padding: 1rem;
+            background-color: white;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .pagination-info {
+            color: #777;
+            font-size: 0.9rem;
+        }
+        
+        .pagination-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+        
+        .pagination-btn {
+            padding: 0.5rem 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            color: #333;
+            text-decoration: none;
+            font-size: 0.9rem;
+            min-width: 2.5rem;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        
+        .pagination-btn:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .pagination-btn.active {
+            background-color: #2c3e50;
+            color: white;
+            border-color: #2c3e50;
+        }
+        
+        .pagination-btn.disabled {
+            opacity: 0.5;
+            cursor: default;
+            pointer-events: none;
+        }
+        
+        .pagination-ellipsis {
+            padding: 0.5rem 0.5rem;
+            color: #777;
+        }
+        
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #ddd;
+        }
+        
+        /* Flash Messages */
+        .alert {
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .footer {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+            text-align: center;
+            color: #777;
+            font-size: 0.9rem;
+        }
+        /* Styles from edit-product.ejs specifically for status badges etc. */
+        .status-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-left: 0.5rem;
+        }
+        .status-listed {
+            background-color: rgba(39, 174, 96, 0.1);
+            color: #27ae60;
+        }
+        .status-unlisted {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: #e74c3c;
+        }
+        .meta-info {
+            font-size: 0.9rem;
+            color: #777;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="admin-logo">APEX</div>
+                <div class="admin-title">Admin Panel</div>
+            </div>
+            
+            <div class="admin-profile">
+                <div class="profile-avatar">
+                    <%= user.username.charAt(0).toUpperCase() %>
+                </div>
+                <div class="profile-info">
+                    <div class="profile-name"><%= user.username %></div>
+                    <div class="profile-role">Administrator</div>
+                </div>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Main</div>
+                <ul class="nav-items">
+                    <li>
+                        <a href="/admin/dashboard">
+                            <span class="nav-icon">📊</span>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/orders">
+                            <span class="nav-icon">📦</span>
+                            Orders
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/products" class="active"> <span class="nav-icon">🎧</span>
+                            Products
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/categories">
+                            <span class="nav-icon">🏷️</span>
+                            Categories
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/users">
+                            <span class="nav-icon">👥</span>
+                            Users
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Settings</div>
+                <ul class="nav-items">
+                    <li>
+                        <a href="/admin/profile">
+                            <span class="nav-icon">👤</span>
+                            Profile
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/settings">
+                            <span class="nav-icon">⚙️</span>
+                            Settings
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/logout">
+                            <span class="nav-icon">🚪</span>
+                            Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Products</h1> <div class="header-actions">
+                    <a href="/admin/products/add" class="btn-add">+ Add Product</a>
+                </div>
+            </div>
+            
+            <div class="search-container">
+                <form action="/admin/products" method="GET" class="search-form">
+                    <div class="search-filters">
+                        <div class="search-input-group">
+                            <input 
+                                type="text" 
+                                name="search" 
+                                placeholder="Search products by name, brand, or description..." 
+                                class="search-input"
+                                value="<%= search %>"
+                            >
+                        </div>
+                        
+                        <div class="filter-input-group">
+                            <select name="categoryFilter" class="filter-select">
+                                <option value="">All Categories</option>
+                                <% if (typeof categories !== 'undefined' && categories && categories.length > 0) { %>
+                                    <% categories.forEach(category => { %>
+                                        <option value="<%= category._id %>" <%= typeof categoryFilter !== 'undefined' && categoryFilter === category._id.toString() ? 'selected' : '' %>>
+                                            <%= category.name %>
+                                        </option>
+                                    <% }); %>
+                                <% } %>
+                            </select>
+                        </div>
+                        
+                        <div class="action-input-group">
+                            <button type="submit" class="search-btn btn-primary">Apply Filters</button>
+                            <% if (search || categoryFilter) { %>
+                                <a href="/admin/products" class="search-btn btn-secondary">Clear All</a>
+                            <% } %>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <% if (locals.messages && messages.success && messages.success.length > 0) { %>
+                <div class="alert alert-success">
+                    <%= messages.success[0] %>
+                </div>
+            <% } %>
+            
+            <% if (locals.messages && messages.error && messages.error.length > 0) { %>
+                <div class="alert alert-error">
+                    <%= messages.error[0] %>
+                </div>
+            <% } %>
+            
+            <div class="products-container">
+                <% if (typeof products !== 'undefined' && products && products.length > 0) { %>
+                    <div class="products-grid">
+                        <% products.forEach(product => { %> <div class="product-card">
+                                <div class="product-image">
+                                    <img src="<%= product.images[0] %>" alt="<%= product.name %>">
+                                    <div class="product-badges">
+                                        <% if (product.isFeatured) { %>
+                                            <span class="product-badge badge-featured">Featured</span>
+                                        <% } %>
+                                        
+                                        <% if (product.salePrice && product.salePrice < product.price) { %>
+                                            <span class="product-badge badge-sale">Sale</span>
+                                        <% } %>
+                                        
+                                        <% if (product.stockQuantity === 0) { %>
+                                            <span class="product-badge badge-stock">Out of Stock</span>
+                                        <% } %>
+                                    </div>
+                                </div>
+                                <div class="product-content">
+                                    <div class="product-category"><%= product.category ? product.category.name : 'Uncategorized' %></div>
+                                    <h3 class="product-title"><%= product.name %></h3>
+                                    <div class="product-brand"><%= product.brand %></div>
+                                    
+                                    <div class="product-price-container">
+                                        <% if (product.salePrice && product.salePrice < product.price) { %>
+                                            <div class="product-price product-sale-price">₹<%= product.salePrice.toFixed(2) %></div>
+                                            <div class="product-original-price">₹<%= product.price.toFixed(2) %></div>
+                                        <% } else { %>
+                                            <div class="product-price">₹<%= product.price.toFixed(2) %></div>
+                                        <% } %>
+                                    </div>
+                                    
+                                    <div class="product-stock">
+                                        <% if (product.stockQuantity > 0) { %>
+                                            In Stock: <%= product.stockQuantity %> units
+                                            <% if (!product.isListed) { %><span class="status-badge status-unlisted" style="margin-left: 5px;">Unlisted</span><% } %>
+                                        <% } else { %>
+                                            Out of Stock
+                                            <% if (!product.isListed) { %><span class="status-badge status-unlisted" style="margin-left: 5px;">Unlisted</span><% } %>
+                                        <% } %>
+                                    </div>
+                                    
+                                    <div class="product-actions">
+                                        <a href="/admin/products/edit/<%= product._id %>" class="product-action action-edit">Edit</a>
+                                        <button 
+                                            class="product-action action-toggle" 
+                                            type="button" onclick="confirmProductToggle('<%= product._id %>', '<%= product.name.replace(/'/g, "\\'" ).replace(/"/g, '&quot;') %>', <%= product.isListed %>)"
+                                        >
+                                            <%= product.isListed ? 'Unlist' : 'List' %>
+                                        </button>
+                                        <button 
+                                            class="product-action action-delete" 
+                                            type="button" onclick="confirmProductDelete('<%= product._id %>', '<%= product.name.replace(/'/g, "\\'").replace(/"/g, '&quot;') %>')"
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+                    
+                    <% if (pagination && pagination.totalPages > 1) { %>
+                        <div class="pagination-container">
+                            <div class="pagination-info">
+                                Showing <%= (pagination.currentPage - 1) * pagination.limit + 1 %> to 
+                                <%= Math.min(pagination.currentPage * pagination.limit, pagination.totalItems) %> of 
+                                <%= pagination.totalItems %> products
+                            </div>
+                            <div class="pagination-controls">
+                                <% if (pagination.hasPrevPage) { %>
+                                    <a href="/admin/products?page=<%= pagination.prevPage %><%= search ? '&search=' + search : '' %><%= categoryFilter ? '&categoryFilter=' + categoryFilter : '' %>" class="pagination-btn">&laquo; Previous</a>
+                                <% } else { %>
+                                    <span class="pagination-btn disabled">&laquo; Previous</span>
+                                <% } %>
+                                
+                                <% 
+                                let startPage = Math.max(1, pagination.currentPage - 2);
+                                let endPage = Math.min(pagination.totalPages, pagination.currentPage + 2);
+                                
+                                if (endPage - startPage < 4) {
+                                    if (startPage === 1) {
+                                        endPage = Math.min(pagination.totalPages, startPage + 4);
+                                    } else {
+                                        startPage = Math.max(1, endPage - 4);
+                                    }
+                                }
+                                
+                                function getPaginationUrl(pageNum) {
+                                    let url = `/admin/products?page=${pageNum}`;
+                                    if (search) url += `&search=${encodeURIComponent(search)}`;
+                                    if (categoryFilter) url += `&categoryFilter=${encodeURIComponent(categoryFilter)}`;
+                                    return url;
+                                }
+                                
+                                if (startPage > 1) { %>
+                                    <a href="<%= getPaginationUrl(1) %>" class="pagination-btn">1</a>
+                                    <% if (startPage > 2) { %>
+                                        <span class="pagination-ellipsis">...</span>
+                                    <% } %>
+                                <% } %>
+                                
+                                <% for(let i = startPage; i <= endPage; i++) { %>
+                                    <% if (i === pagination.currentPage) { %>
+                                        <span class="pagination-btn active"><%= i %></span>
+                                    <% } else { %>
+                                        <a href="<%= getPaginationUrl(i) %>" class="pagination-btn"><%= i %></a>
+                                    <% } %>
+                                <% } %>
+                                
+                                <% if (endPage < pagination.totalPages) { %>
+                                    <% if (endPage < pagination.totalPages - 1) { %>
+                                        <span class="pagination-ellipsis">...</span>
+                                    <% } %>
+                                    <a href="<%= getPaginationUrl(pagination.totalPages) %>" class="pagination-btn"><%= pagination.totalPages %></a>
+                                <% } %>
+                                
+                                <% if (pagination.hasNextPage) { %>
+                                    <a href="<%= getPaginationUrl(pagination.nextPage) %>" class="pagination-btn">Next &raquo;</a>
+                                <% } else { %>
+                                    <span class="pagination-btn disabled">Next &raquo;</span>
+                                <% } %>
+                            </div>
+                        </div>
+                    <% } %>
+                <% } else { %>
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🎧</div>
+                        <h3>No Products Found</h3>
+                        <% if (search || categoryFilter) { %>
+                            <p>No products match your current filter criteria.</p>
+                            <a href="/admin/products" class="btn-add btn-secondary">Clear Filters</a>
+                        <% } else { %>
+                            <p>Get started by adding your first product</p>
+                            <a href="/admin/products/add" class="btn-add">Add Product</a>
+                        <% } %>
+                    </div>
+                <% } %>
+            </div>
+            
+            <div class="footer">
+                <p>&copy; <%= new Date().getFullYear() %> Apex Headphones. All Rights Reserved.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-hide flash messages after 3 seconds
+            setTimeout(() => {
+                const alerts = document.querySelectorAll('.alert.alert-success, .alert.alert-error');
+                alerts.forEach(alert => {
+                    if(alert) alert.style.display = 'none';
+                });
+            }, 3000);
+            
+            // Confirm product listing/unlisting with SweetAlert2
+            window.confirmProductToggle = async function(productId, productName, isListed) {
+                const action = isListed ? 'unlist' : 'list';
+                const confirmMessage = `Are you sure you want to ${action} "${productName}"?`;
+                
+                // Use SweetAlert2 for confirmation dialog
+                const result = await Swal.fire({
+                    title: `${action.charAt(0).toUpperCase() + action.slice(1)} Product?`,
+                    text: confirmMessage,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: `Yes, ${action} it!`
+                });
+                
+                if (result.isConfirmed) {
+                    try {
+                        const response = await fetch(`/admin/products/toggle-list/${productId}`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' }
+                        });
+                        
+                        // Check if the response is OK (status in the range 200-299)
+                        if (response.ok) {
+                            // Get the response text first to debug
+                            const responseText = await response.text();
+                            console.log('Raw response:', responseText);
+                            
+                            try {
+                                // Parse the text into JSON if possible
+                                const data = responseText ? JSON.parse(responseText) : {};
+                                
+                                if (data && data.success) {
+                                    // Success notification
+                                    await Swal.fire({
+                                        title: 'Success!',
+                                        text: data.message || `Product ${action}ed successfully.`,
+                                        icon: 'success',
+                                        timer: 2000,
+                                        showConfirmButton: false
+                                    });
+                                } else {
+                                    // Server returned JSON but with success: false
+                                    console.error('Server reported error:', data);
+                                    await Swal.fire({
+                                        title: 'Error!',
+                                        text: data?.message || `Failed to ${action} product.`,
+                                        icon: 'error'
+                                    });
+                                }
+                            } catch (jsonError) {
+                                // Response was OK but JSON parsing failed
+                                console.error('Error parsing JSON response:', jsonError);
+                                
+                                // Assume success since HTTP response was OK
+                                await Swal.fire({
+                                    title: 'Success!',
+                                    text: `Product ${action}ed successfully.`,
+                                    icon: 'success',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                            }
+                            
+                            // Reload the page regardless of JSON parsing
+                            window.location.reload();
+                        } else {
+                            // HTTP error status code
+                            console.error('HTTP error:', response.status);
+                            Swal.fire({
+                                title: 'Error!',
+                                text: `Failed to ${action} product. Status: ${response.status}`,
+                                icon: 'error'
+                            });
+                        }
+                    } catch (err) {
+                        console.error(`Error toggling product status: ${err}`);
+                        Swal.fire({
+                            title: 'Error!',
+                            text: `An error occurred. Could not ${action} product.`,
+                            icon: 'error'
+                        });
+                    }
+                }
+            };
+
+            // Confirm product deletion with SweetAlert2
+            window.confirmProductDelete = async function(productId, productName) {
+                const result = await Swal.fire({
+                    title: 'Are you sure?',
+                    text: `Do you really want to delete "${productName}"? This action cannot be undone!`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!'
+                });
+                
+                if (result.isConfirmed) {
+                    try {
+                        const response = await fetch(`/admin/products/delete/${productId}`, {
+                            method: 'DELETE',
+                            headers: { 
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            }
+                        });
+                        
+                        if (response.ok) {
+                            const responseText = await response.text();
+                            console.log('Raw response:', responseText);
+                            
+                            try {
+                                // Parse the text into JSON if possible
+                                const data = responseText ? JSON.parse(responseText) : {};
+                                
+                                if (data && data.success) {
+                                    // Success notification
+                                    await Swal.fire({
+                                        title: 'Deleted!',
+                                        text: data.message || 'Product has been deleted.',
+                                        icon: 'success',
+                                        timer: 2000,
+                                        showConfirmButton: false
+                                    });
+                                } else {
+                                    // Server returned JSON but with success: false
+                                    console.error('Server reported error:', data);
+                                    await Swal.fire({
+                                        title: 'Error!',
+                                        text: data?.message || 'Failed to delete product.',
+                                        icon: 'error'
+                                    });
+                                }
+                            } catch (jsonError) {
+                                // Response was OK but JSON parsing failed
+                                console.error('Error parsing JSON response:', jsonError);
+                                
+                                // Assume success since HTTP response was OK
+                                await Swal.fire({
+                                    title: 'Deleted!',
+                                    text: 'Product has been deleted.',
+                                    icon: 'success',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                            }
+                            
+                            // Reload the page regardless of JSON parsing
+                            window.location.reload();
+                        } else {
+                            // HTTP error status code
+                            console.error('HTTP error:', response.status);
+                            Swal.fire({
+                                title: 'Error!',
+                                text: `Failed to delete product. Status: ${response.status}`,
+                                icon: 'error'
+                            });
+                        }
+                    } catch (err) {
+                        console.error(`Error deleting product: ${err}`);
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'An error occurred. Could not delete product.',
+                            icon: 'error'
+                        });
+                    }
+                }
+            };
+        });
+    </script>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
+</body>
+</html>

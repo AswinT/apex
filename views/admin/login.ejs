@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .admin-container {
+            max-width: 500px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .admin-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .admin-header h2 {
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        .admin-logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #e74c3c;
+            margin-bottom: 1rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        .admin-btn {
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+        }
+        .admin-btn:hover {
+            background-color: #1a252f;
+        }
+        .admin-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: #777;
+        }
+        #statusMessage {
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <main class="admin-container">
+        <div class="admin-header">
+            <div class="admin-logo">APEX</div>
+            <h2>Admin Login</h2>
+            <p>Access the administrative dashboard</p>
+        </div>
+        
+        <div id="statusMessage"></div>
+        
+        <form id="adminLoginForm">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <button type="submit" class="admin-btn">Login</button>
+        </form>
+        
+        <div class="admin-footer">
+            <p>&copy; <%= new Date().getFullYear() %> Apex Headphones. All Rights Reserved.</p>
+            <p><a href="/">Return to Website</a></p>
+        </div>
+        
+        <div style="margin-top: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 5px; font-size: 0.9rem; border-left: 3px solid #2c3e50;">
+            <p style="margin-bottom: 5px; font-weight: bold;">Demo Admin Credentials:</p>
+            <p style="margin: 0;">Email: admin@apex.com</p>
+            <p style="margin: 0;">Password: Admin@123</p>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const adminLoginForm = document.getElementById('adminLoginForm');
+            const statusMessage = document.getElementById('statusMessage');
+            
+            adminLoginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Get form data
+                const formData = {
+                    email: document.getElementById('email').value,
+                    password: document.getElementById('password').value
+                };
+                
+                try {
+                    // Send login request
+                    const response = await fetch('/admin/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        // Show success message
+                        statusMessage.textContent = data.message;
+                        statusMessage.className = 'success';
+                        statusMessage.style.display = 'block';
+                        
+                        // Redirect to dashboard
+                        setTimeout(() => {
+                            window.location.href = data.redirect || '/admin/dashboard';
+                        }, 1000);
+                    } else {
+                        // Show error message
+                        statusMessage.textContent = data.message;
+                        statusMessage.className = 'error';
+                        statusMessage.style.display = 'block';
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    statusMessage.textContent = 'An error occurred. Please try again.';
+                    statusMessage.className = 'error';
+                    statusMessage.style.display = 'block';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
